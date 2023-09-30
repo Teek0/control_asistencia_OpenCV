@@ -10,10 +10,10 @@
     <link href="/app_attendward/static/css/styles.css" rel="stylesheet">
 </head>
 
-<body>
-    <header>
+<body class="body">
+    <header class="header">
         <ul>
-            <li><img src="Logo utem pendiente" alt="Logo UTEM"></li>
+            <li><img src="/app_attendward/static/img/logoLargeLight.png" alt="Logo UTEM"></li>
             <li>
                 <h1>BIENVENIDO ADMIN</h1>
             </li>
@@ -24,66 +24,26 @@
         <h2>Buscar:</h2>
         <h2>Agregar:</h2>
         <div>
-            <div id="adminCarousel" class="carousel slide">
-                <div class="carousel-inner mb-11" style="background-color: pink;">
-                    <div class="carousel-item active">
-                        <div class="row">
-                            <div class="col-4">
-                                <h3>Alumnos</h3>
-                                <form>
-                                    <input type="text" placeholder="Rut">
-                                    <input type="text" placeholder="Nombre">
-                                    <input type="text" placeholder="Apellido">
-                                    <input type="text" placeholder="Carrera">
-                                    <input type="text" placeholder="Correo">
-                                    <input type="text" placeholder="Contraseña">
-                                    <input type="submit" value="Agregar">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="row">
-                            <div class="col-4">
-                                <h3>Curso</h3>
-                                <form>
-                                    <input type="text" placeholder="Nombre">
-                                    <input type="text" placeholder="Código">
-                                    <input type="text" placeholder="Carrera">
-                                    <input type="text" placeholder="Profesor">
-                                    <input type="submit" value="Agregar">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="carousel-item">
-                        <div class="row">
-                            <div class="col-4">
-                                <h3>Profesor</h3>
-                                <form>
-                                    <input type="text" placeholder="Rut">
-                                    <input type="text" placeholder="Nombre">
-                                    <input type="text" placeholder="Apellido">
-                                    <input type="text" placeholder="Carrera">
-                                    <input type="text" placeholder="Correo">
-                                    <input type="text" placeholder="Contraseña">
-                                    <input type="submit" value="Agregar">
-                                </form>
-                            </div>
-                        </div>
-                    </div>
+
+            <nav>
+                <div class="nav nav-tabs" id="nav-tab" role="tablist">
+                    <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
+                        type="button" role="tab" aria-controls="nav-home" aria-selected="true">Curso</button>
+                    <button class="nav-link" id="nav-profile-tab" data-bs-toggle="tab" data-bs-target="#nav-profile"
+                        type="button" role="tab" aria-controls="nav-profile" aria-selected="false">Profesor</button>
+                    <button class="nav-link" id="nav-contact-tab" data-bs-toggle="tab" data-bs-target="#nav-contact"
+                        type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Alumno</button>
                 </div>
-                <button class="carousel-control-prev" type="button" data-bs-target="#adminCarousel"
-                    data-bs-slide="prev">
-                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Previous</span>
-                </button>
-                <button class="carousel-control-next" type="button" data-bs-target="#adminCarousel"
-                    data-bs-slide="next">
-                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                    <span class="visually-hidden">Next</span>
-                </button>
+            </nav>
+            <div class="tab-content" id="nav-tabContent">
+                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
+                    tabindex="0">...</div>
+                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"
+                    tabindex="0">...</div>
+                <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab"
+                    tabindex="0">...</div>
             </div>
+
         </div>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
             integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"

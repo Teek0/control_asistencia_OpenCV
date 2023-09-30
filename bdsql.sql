@@ -15,16 +15,34 @@ CREATE SCHEMA IF NOT EXISTS `attend_bd` DEFAULT CHARACTER SET utf8 ;
 USE `attend_bd` ;
 
 -- -----------------------------------------------------
--- Table `attend_bd`.`cursos`
+-- Table `attend_bd`.`asignaturas`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `attend_bd`.`cursos` (
-  `idcurso` INT NOT NULL AUTO_INCREMENT,
+CREATE TABLE IF NOT EXISTS `attend_bd`.`asignaturas` (
+  `idasignatura` INT NOT NULL,
   `nombre` VARCHAR(45) NOT NULL,
   `codigo` VARCHAR(45) NOT NULL,
+  PRIMARY KEY (`idasignatura`))
+ENGINE = InnoDB;
+
+
+-- -----------------------------------------------------
+-- Table `attend_bd`.`secciones`
+-- -----------------------------------------------------
+CREATE TABLE IF NOT EXISTS `attend_bd`.`secciones` (
+  `idseccion` INT NOT NULL AUTO_INCREMENT,
   `seccion` VARCHAR(45) NOT NULL,
+  `hora_de_inicio` TIMESTAMP NOT NULL,
+  `hora_de_termino` TIMESTAMP NOT NULL,
   `creado` DATETIME NOT NULL DEFAULT NOW(),
   `editado` DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-  PRIMARY KEY (`idcurso`))
+  `idasignatura` INT NOT NULL,
+  PRIMARY KEY (`idseccion`),
+  INDEX `fk_secciones_asignaturas1_idx` (`idasignatura` ASC) VISIBLE,
+  CONSTRAINT `fk_secciones_asignaturas1`
+    FOREIGN KEY (`idasignatura`)
+    REFERENCES `attend_bd`.`asignaturas` (`idasignatura`)
+    ON DELETE NO ACTION
+    ON UPDATE NO ACTION)
 ENGINE = InnoDB;
 
 
@@ -48,20 +66,20 @@ ENGINE = InnoDB;
 -- Table `attend_bd`.`listado_asistencias`
 -- -----------------------------------------------------
 CREATE TABLE IF NOT EXISTS `attend_bd`.`listado_asistencias` (
-  `curso_idcurso` INT NOT NULL,
-  `alumno_idalumno` INT NOT NULL,
+  `idcurso` INT NOT NULL,
+  `idalumno` INT NOT NULL,
   `fecha` DATETIME NOT NULL,
   `asiste` TINYINT NOT NULL,
-  PRIMARY KEY (`curso_idcurso`, `alumno_idalumno`),
-  INDEX `fk_curso_has_alumno_alumno1_idx` (`alumno_idalumno` ASC) VISIBLE,
-  INDEX `fk_curso_has_alumno_curso_idx` (`curso_idcurso` ASC) VISIBLE,
+  PRIMARY KEY (`idcurso`, `idalumno`),
+  INDEX `fk_curso_has_alumno_alumno1_idx` (`idalumno` ASC) VISIBLE,
+  INDEX `fk_curso_has_alumno_curso_idx` (`idcurso` ASC) VISIBLE,
   CONSTRAINT `fk_curso_has_alumno_curso`
-    FOREIGN KEY (`curso_idcurso`)
-    REFERENCES `attend_bd`.`cursos` (`idcurso`)
+    FOREIGN KEY (`idcurso`)
+    REFERENCES `attend_bd`.`secciones` (`idseccion`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION,
   CONSTRAINT `fk_curso_has_alumno_alumno1`
-    FOREIGN KEY (`alumno_idalumno`)
+    FOREIGN KEY (`idalumno`)
     REFERENCES `attend_bd`.`alumnos` (`idalumno`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
@@ -79,12 +97,12 @@ CREATE TABLE IF NOT EXISTS `attend_bd`.`docentes` (
   `password` VARCHAR(30) NOT NULL,
   `creado` DATETIME NOT NULL DEFAULT NOW(),
   `editado` DATETIME NOT NULL DEFAULT NOW() ON UPDATE NOW(),
-  `cursos_idcurso` INT NOT NULL,
+  `idcurso` INT NOT NULL,
   PRIMARY KEY (`idprofesor`),
-  INDEX `fk_docentes_cursos1_idx` (`cursos_idcurso` ASC) VISIBLE,
+  INDEX `fk_docentes_cursos1_idx` (`idcurso` ASC) VISIBLE,
   CONSTRAINT `fk_docentes_cursos1`
-    FOREIGN KEY (`cursos_idcurso`)
-    REFERENCES `attend_bd`.`cursos` (`idcurso`)
+    FOREIGN KEY (`idcurso`)
+    REFERENCES `attend_bd`.`secciones` (`idseccion`)
     ON DELETE NO ACTION
     ON UPDATE NO ACTION)
 ENGINE = InnoDB;
