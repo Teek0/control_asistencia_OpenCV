@@ -1,6 +1,6 @@
 from flask import render_template
 from app_attendward import app
 
-@app.route('/', methods=['GET'])
-def desplegar_lista_de_cursos():
-    return render_template('lista_cursos.html')
+@app.route('/cursos', methods=['GET'])
+def get_all_cursos():
+    return render_template('cursos.html')
