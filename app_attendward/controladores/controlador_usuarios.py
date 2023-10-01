@@ -8,3 +8,4 @@ bcrypt=Bcrypt(app)
 @app.route('/', methods = ['GET'])
 def desplegar_login():
     return render_template('login.html')
+
