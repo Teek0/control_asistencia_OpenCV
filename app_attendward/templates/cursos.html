@@ -15,7 +15,7 @@
         <ul>
             <li><img src="{{url_for('static',filename='/img/logoColor_banner.png')}}" alt="Logo UTEM"></li>
             <li>
-                <h1 class="h1">BIENVENIDO NOMBRE</h1>
+                <h1 class="h1">BIENVENIDO {{session['nombre']}} {{session['apellido']}}</h1>
             </li>
             <li><button>Cerrar sesión</button></li>
         </ul>
