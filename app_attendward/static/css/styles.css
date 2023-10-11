@@ -9,3 +9,81 @@
 .h1 {
     color: white;
 }
+
+/* Login */
+.login_font{
+    color: #006388;
+}
+
+section {
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    height: 100vh;
+}
+
+.logo {
+    width: 85px;
+    height: 100px;
+}
+
+.fondo_blanco {
+    text-align: center;
+    background-color: white;
+    margin: 15px;
+    padding: 30px;
+    border-radius: 30px;
+    box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.35);
+}
+
+.fondo_blanco form{
+    display:flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.box{
+    margin: 10px;
+    padding: 10px 30px;
+    border-radius: 30px;
+    border: 0px;
+    background-color: #F5F5F5;
+    font-size: small;
+    
+}
+.button{
+    margin: 10px;
+    padding: 10px 30px;
+    border-radius: 30px;
+    border: 0px;
+    background-color: #00956D;
+    color: white;
+    font-weight: bold;
+}
+
+.input {
+    margin: 10px;
+    padding: 10px;
+    border-radius: 10px;
+    border: 1px solid #004C68;
+}
+
+.info {
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    border-bottom: 0;
+}
+
+.info img {
+    width: 15px;
+    height: 15px;
+}
+
+.info p {
+    margin-bottom: 0;
+    margin-left: 5px;
+}
+
+/* Home */
