@@ -6,7 +6,7 @@ El software toma el nombre de attendward para el desarrollo, este no pretende se
 pip install pipenv
 
 
-pipenv install flask pymysql flask-bcrypt opencv-python openopencv-contrib-python
+pipenv install flask pymysql flask-bcrypt opencv-contrib-python
 
 
 #pipenv shell
