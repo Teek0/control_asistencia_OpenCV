@@ -1,8 +1,6 @@
 from app_attendward.config.mysqlconnection import connectToMySQL
 
-class Asistencia:
+class Inscrito:
     def __init__(self, data):
         self.id_alumno = data['id_alumno']
         self.id_seccion = data['id_seccion']
-        self.fecha = data['fecha']
-

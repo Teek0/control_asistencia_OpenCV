@@ -22,5 +22,5 @@ def get_all_alumnos():
     return render_template('captura_asistencia.html')
 @app.route('/video_feed', methods=['GET'])
 def video_feed():
-    print ("video_feed hola")
+    print ("video_feed")
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
