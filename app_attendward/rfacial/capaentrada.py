@@ -1,15 +1,10 @@
-# pip install opencv-python
-# python.exe -m pip install --upgrade pip
-# pip install opencv-contrib-python
-# pip install imutils
-
 import cv2 as cv
 import os
 import imutils
 from time import time
 
 modelo = '18085868'
-ruta1 = 'C:/Users/Administrador/Desktop/TT2/ttini/ReconocimientoFacial/DATA'
+ruta1 = 'app_attendward/rfacial/DATA'
 rutacompleta = ruta1+'/'+modelo
 
 if not os.path.exists(rutacompleta):
@@ -17,7 +12,7 @@ if not os.path.exists(rutacompleta):
 
 camara = cv.VideoCapture(0)
 print("camara lista")
-ruidos = cv.CascadeClassifier('ReconocimientoFacial/haarcascade_frontalface_default.xml')    # detector de rostros
+ruidos = cv.CascadeClassifier(cv.data.haarcascade + 'haarcascade_frontalface_default.xml')    # detector de rostros
 tiempoInicial = time()
 
 id = 1
@@ -44,7 +39,7 @@ while True:
 
     cv.imshow("Resultado", captura)
 
-    if id == 100:
+    if id == 26:
         break
 print("Tiempo de captura: ", round(time() - tiempoInicial, 1), " segundos")
 camara.release()

@@ -3,7 +3,7 @@ import os
 import numpy as np
 from time import time
 
-dataRuta = 'C:/Users/Administrador/Desktop/TT2/ttini/ReconocimientoFacial/DATA'
+dataRuta = 'app_attendward/rfacial/DATA'
 listaData = os.listdir(dataRuta)
 # Crear una lista para almacenar modelos de entrenamiento
 modelos_entrenados = []

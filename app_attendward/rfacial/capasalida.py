@@ -1,11 +1,9 @@
 import cv2 as cv
-import os
 import imutils
-from time import time
 from capaentrenamiento import listaData, modelos_entrenados
 
-dataRuta = 'C:/Users/Administrador/Desktop/TT2/ttini/ReconocimientoFacial/DATA'
-ruidos = cv.CascadeClassifier('ReconocimientoFacial/haarcascade_frontalface_default.xml')
+dataRuta = 'app_attendward/rfacial/DATA'
+ruidos = cv.CascadeClassifier(cv.data.haarcascade + 'haarcascade_frontalface_default.xml')
 camara = cv.VideoCapture(0)
 
 while True:
