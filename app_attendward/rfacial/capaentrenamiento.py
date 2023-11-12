@@ -1,7 +1,6 @@
 import cv2 as cv
 import os
 import numpy as np
-from time import time
 
 dataRuta = 'app_attendward/rfacial/DATA'
 listaData = os.listdir(dataRuta)
@@ -28,7 +27,7 @@ for persona in listaData:
     
     # Guardar el modelo en un archivo
     modelo_file = f"modelo_{persona}.xml"
-    entrenamientoEigenFaceRecognizer.save(os.path.join(dataRuta, modelo_file))
+    entrenamientoEigenFaceRecognizer.save(os.path.join('app_attendward/rfacial/entrenamientos', modelo_file))
     
     modelos_entrenados.append(entrenamientoEigenFaceRecognizer)
 

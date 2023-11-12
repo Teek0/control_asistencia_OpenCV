@@ -12,7 +12,7 @@ if not os.path.exists(rutacompleta):
 
 camara = cv.VideoCapture(0)
 print("camara lista")
-ruidos = cv.CascadeClassifier(cv.data.haarcascade + 'haarcascade_frontalface_default.xml')    # detector de rostros
+ruidos = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')    # detector de rostros
 tiempoInicial = time()
 
 id = 1
