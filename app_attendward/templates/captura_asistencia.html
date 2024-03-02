@@ -1,19 +1,18 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Capturar asistencia</title>
+    <!-- Asegúrate de cargar los estilos y scripts necesarios -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
-    <link rel="stylesheet" href="{{url_for('static',filename='/css/styles.css')}}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
 </head>
-
 <body class="body">
     <header class="header">
         <ul>
-            <li><img src="{{url_for('static',filename='/img/logoColor_banner.png')}}" alt="Logo UTEM"></li>
+            <li><img src="{{ url_for('static', filename='/img/logoColor_banner.png') }}" alt="Logo UTEM"></li>
             <li>
                 <h1 class="h1">CURSO CURSO</h1>
             </li>
@@ -24,12 +23,14 @@
         <h2>Fecha de hoy</h2>
         <div>
             <h5>Video en directo</h5>
-            <img id="video" src="{{url_for('video_feed')}}" alt="Video en directo">
+            <img id="video" src="{{ url_for('video_feed') }}" alt="Video en directo">
         </div>
         <div>
             <h3>Asistencia</h3>
-            <ul>
-                <li>Alumno nombre apellido</li>
+            <ul id="arreglo-list">
+                {% for item in arreglo %}
+                    <li>{{ item }}</li>
+                {% endfor %}
             </ul>
         </div>
         <div>
@@ -47,12 +48,31 @@
         <form>
             <input type="submit" value="Finalizar y generar informe">
         </form>
-
     </main>
+    <!-- Asegúrate de cargar los scripts necesarios al final del body -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous"></script>
-
+        <script>
+            // Función para actualizar la lista
+            function actualizarLista() {
+                fetch('/listaDetectados')
+                    .then(response => response.json())
+                    .then(data => {
+                        const arregloList = document.getElementById('arreglo-list');
+                        arregloList.innerHTML = ''; // Limpiamos la lista antes de agregar los nuevos elementos
+                        data.arreglo.forEach(item => {
+                            const li = document.createElement('li');
+                            li.textContent = item;
+                            arregloList.appendChild(li);
+                        });
+                        console.log('Lista actualizada');
+                    })
+                    .catch(error => console.error('Error al obtener el arreglo:', error));
+            }
+        
+            // Actualizar la lista cada 1 segundo (1000 milisegundos)
+            setInterval(actualizarLista, 1000);
+        </script>
 </body>
-
 </html>
