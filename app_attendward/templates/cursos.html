@@ -17,27 +17,40 @@
             <li>
                 <h1 class="h1">BIENVENIDO {{session['nombre']}} {{session['apellido']}}</h1>
             </li>
-            <li><button>Cerrar sesión</button></li>
+            <li>
+                <form action="/logout" method="post">
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            </li>
         </ul>
     </header>
     <main>
         <h2>Lista de cursos</h2>
         <div class="cursos">
             <table>
-                <caption>Description of the table</caption>
+                <caption></caption>
                 <tr>
                     <th>Nombre</th>
+                    <th>Asignatura ID</th>
                     <th>Sección</th>
+                    <th>Sección ID</th>
                     <th>Horario</th>
+                    <th>Acciones</th>
                 </tr>
+                {% for curso in cursos %}
                 <tr>
-                    <td>Algoritmos y programación</td>
-                    <td>414</td>
-                    <td>09:40 - 11:10</td>
+                    <td>{{ curso.nombre_asignatura }}</td>
+                    <td>{{ curso.id_asignatura }}</td>
+                    <td>{{ curso.seccion }}</td>
+                    <td>{{ curso.id_seccion }}</td>
+                    <td>{{ curso.horario }}</td>
+                    <td><a href="{{ url_for('get_alumnos_by_section', section_id=curso.id_seccion) }}" class="btn btn-primary">Ver alumnos</a></td>
                 </tr>
+                {% endfor %}
             </table>
         </div>
     </main>
+    
     <aside>
         <form method="GET" action="/captura_asistencia">
             <button>Tomar control de asistencia</button>

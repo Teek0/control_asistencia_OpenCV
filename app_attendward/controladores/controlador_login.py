@@ -1,5 +1,4 @@
 from flask import render_template,request,session,redirect,flash
-from app_attendward.modelos.modelo_docentes import Docente
 from flask_bcrypt import Bcrypt
 from app_attendward import app
 

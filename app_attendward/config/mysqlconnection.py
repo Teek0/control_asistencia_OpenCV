@@ -20,7 +20,6 @@ class MySQLConnection:
     def query_db(self, query, data=None):
         with self.connection.cursor() as cursor:
             try:
-                query = cursor.mogrify(query, data)
                 print("Running Query:", query)
                 cursor.execute(query, data)
                 if query.lower().find("insert") >= 0:
@@ -41,6 +40,7 @@ class MySQLConnection:
             finally:
                 # cerrar la conexión
                 self.connection.close()
+
 
 
 # connectToMySQL recibe la base de datos que estamos usando y la usa para crear una instancia de MySQLConnection
