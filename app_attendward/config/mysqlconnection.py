@@ -16,6 +16,9 @@ class MySQLConnection:
         # establecer la conexión a la base de datos
         self.connection = connection
 
+    def close_connection(self):
+        self.connection.close()
+
     # el método para consultar la base de datos
     def query_db(self, query, data=None):
         with self.connection.cursor() as cursor:
@@ -37,9 +40,9 @@ class MySQLConnection:
                 # si la consulta falla, el método devolverá FALSE
                 print("Something went wrong", e)
                 return False
-            finally:
+            """finally:
                 # cerrar la conexión
-                self.connection.close()
+                self.connection.close()"""
 
 
 
