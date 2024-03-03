@@ -113,8 +113,11 @@ th, td {
     padding: 8px;
     text-align: left;
 }
+tr{
+    background-color: #edf6ff;
+}
 tr:nth-child(even) {
-    background-color: #f2f2f2;
+    background-color: #f3fbff;
 }
 th {
     background-color: #4CAF50;
