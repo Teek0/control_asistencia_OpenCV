@@ -8,8 +8,10 @@
 </head>
 <body>
     <header>
-        <h1>Lista de Alumnos Inscritos - {{ seccion.nombre_asignatura }} - Sección {{ seccion.seccion }}</h1>
-    </header>
+        <header>
+            <h1>Lista de Alumnos Inscritos - {{ seccion.nombre_asignatura }} - Sección {{ seccion.seccion }}</h1>
+            <h2>{{ fecha_actual.day }} de {{ meses[fecha_actual.month] }} de {{ fecha_actual.year }}</h2> <!-- Muestra la fecha actual en formato "dd de mes de año" -->
+        </header>
     <main>
         <table>
             <caption></caption>

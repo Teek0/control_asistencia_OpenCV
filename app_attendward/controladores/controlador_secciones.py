@@ -1,6 +1,7 @@
 from flask import render_template
 from app_attendward import app
 from app_attendward.config.mysqlconnection import connectToMySQL
+from datetime import datetime
 
 @app.route('/cursos', methods=['GET'])
 def get_all_cursos():
@@ -20,4 +21,20 @@ def get_alumnos_by_section(section_id):
     alumnos_data = mysql.query_db(alumnos_query, (section_id,))
     # Cerrar la conexión manualmente
     mysql.close_connection()
-    return render_template('alumnos.html', seccion=section_data[0], alumnos=alumnos_data)
+    fecha_actual = datetime.now()
+    # Define un diccionario para traducir los nombres de los meses
+    meses = {
+        1: 'enero',
+        2: 'febrero',
+        3: 'marzo',
+        4: 'abril',
+        5: 'mayo',
+        6: 'junio',
+        7: 'julio',
+        8: 'agosto',
+        9: 'septiembre',
+        10: 'octubre',
+        11: 'noviembre',
+        12: 'diciembre'
+    }
+    return render_template('alumnos.html', seccion=section_data[0], alumnos=alumnos_data, fecha_actual=fecha_actual, meses=meses)
