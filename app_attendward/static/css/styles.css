@@ -88,6 +88,9 @@
     color: white;
 }
 
+.h2 {
+    color: white;
+}
 .header ul {
     display: flex;
     justify-content: space-around;

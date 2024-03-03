@@ -49,13 +49,18 @@ def generatex():
                         cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
                         break  # Salir del bucle si se encuentra una persona
                 else:
-                    cv2.putText(frame, "No encontradox", (x, y - 20), 2, 0.7, (0, 255, 0), 1, cv2.LINE_AA)
+                    cv2.putText(frame, "No encontrado", (x, y - 20), 2, 0.7, (0, 255, 0), 1, cv2.LINE_AA)
                     cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
             (flag, encoded_image) = cv2.imencode(".jpg", frame)
             if not flag:
                 continue
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encoded_image) + b'\r\n')
+
+
+@app.route('/admin', methods=['GET'])
+def admin_page():
+    return render_template('admin.html')
 
 
 @app.route('/cursos', methods=['GET'])
@@ -66,7 +71,7 @@ def get_all_cursos():
     return render_template('cursos.html', cursos=data)
 
 @app.route('/alumnos/<int:section_id>', methods=['GET'])
-def get_alumnos_by_section(section_id):
+def get_alumnos_by_section_on_date(section_id):
     mysql = connectToMySQL('attend_bd')
     # Consulta para obtener los datos de la sección y la asignatura
     section_query = "SELECT secciones.*, asignaturas.nombre AS nombre_asignatura FROM secciones JOIN asignaturas ON asignaturas.id_asignatura = secciones.id_asignatura WHERE secciones.id_seccion = %s;"
@@ -74,11 +79,11 @@ def get_alumnos_by_section(section_id):
     # Consulta para obtener los datos de los alumnos
     alumnos_query = "SELECT alumnos.* FROM alumnos JOIN inscritos ON inscritos.id_alumno = alumnos.id_alumno WHERE inscritos.id_seccion = %s;"
     alumnos_data = mysql.query_db(alumnos_query, (section_id,))
-    auxList = []
+    aux_list = []
     for alumno in alumnos_data:
-        auxList.append(alumno)
+        aux_list.append(alumno)
     global listaDeEstudiantes
-    listaDeEstudiantes = auxList 
+    listaDeEstudiantes = aux_list 
     # Cerrar la conexión manualmente
     mysql.close_connection()
     fecha_actual = datetime.now()
@@ -102,3 +107,15 @@ def get_alumnos_by_section(section_id):
 @app.route('/video_feedx', methods=['GET'])
 def video_feedx():
     return Response(generatex(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/listado_seccion/<int:section_id>', methods=['GET'])
+def get_alumnos_by_section(section_id):
+    mysql = connectToMySQL('attend_bd')
+    # Consulta para obtener los datos de la sección y la asignatura
+    section_query = "SELECT secciones.*, asignaturas.nombre AS nombre_asignatura FROM secciones JOIN asignaturas ON asignaturas.id_asignatura = secciones.id_asignatura WHERE secciones.id_seccion = %s;"
+    section_data = mysql.query_db(section_query, (section_id,))
+    # Consulta para obtener los datos de los alumnos
+    alumnos_query = "SELECT alumnos.* FROM alumnos JOIN inscritos ON inscritos.id_alumno = alumnos.id_alumno WHERE inscritos.id_seccion = %s;"
+    alumnos_data = mysql.query_db(alumnos_query, (section_id,))
+    mysql.close_connection()
+    return render_template('listado_seccion.html', seccion=section_data[0], alumnos=alumnos_data)

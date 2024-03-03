@@ -13,8 +13,8 @@
         <ul>
             <li><img src="{{url_for('static',filename='/img/logoColor_banner.png')}}" alt="Logo UTEM"></li>
             <li>
-                <h1 class="h1">Asistencia:</h1>
-                <h2 class="h2">{{ seccion.nombre_asignatura }} - Sección {{ seccion.seccion }}</h2>
+                <h1 class="h1">Alumnos Inscritos:</h1>
+                <h2 class="h2"> {{ seccion.nombre_asignatura }} - Sección {{ seccion.seccion }}</h2>
             </li>
             <li>
                 <form action="/logout" method="post">
@@ -23,9 +23,6 @@
             </li>
         </ul>
     </header>
-    <div>
-        <h2>{{ fecha_actual.day }} de {{ meses[fecha_actual.month] }} de {{ fecha_actual.year }}</h2>
-    </div>
     <main>
         <table>
             <caption></caption>
@@ -46,8 +43,6 @@
                 {% endfor %}
             </tbody>
         </table>
-        <img id="video" class="img-fluid" src="{{ url_for('video_feedx') }}" alt="Video en directo">
-
     </main>
 </body>
 </html>

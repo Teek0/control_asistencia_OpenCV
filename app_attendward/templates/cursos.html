@@ -15,7 +15,12 @@
         <ul>
             <li><img src="{{url_for('static',filename='/img/logoColor_banner.png')}}" alt="Logo UTEM"></li>
             <li>
-                <h1 class="h1">BIENVENIDO {{session['nombre']}} {{session['apellido']}}</h1>
+                <h1 class="h1">Cursos disponibles</h1>
+            </li>
+            <li>
+                <form action="/admin" method="post">
+                    <button type="submit" class="btn btn-secondary">Administrar</button>
+                </form>
             </li>
             <li>
                 <form action="/logout" method="post">
@@ -25,26 +30,22 @@
         </ul>
     </header>
     <main>
-        <h2>Lista de cursos</h2>
         <div class="cursos">
             <table>
                 <caption></caption>
                 <tr>
                     <th>Nombre</th>
-                    <th>Asignatura ID</th>
                     <th>Sección</th>
-                    <th>Sección ID</th>
                     <th>Horario</th>
                     <th>Acciones</th>
                 </tr>
                 {% for curso in cursos %}
                 <tr>
                     <td>{{ curso.nombre_asignatura }}</td>
-                    <td>{{ curso.id_asignatura }}</td>
                     <td>{{ curso.seccion }}</td>
-                    <td>{{ curso.id_seccion }}</td>
                     <td>{{ curso.horario }}</td>
-                    <td><a href="{{ url_for('get_alumnos_by_section', section_id=curso.id_seccion) }}" class="btn btn-primary">Ver alumnos</a></td>
+                    <td><a href="{{ url_for('get_alumnos_by_section', section_id=curso.id_seccion) }}" class="btn btn-info">Lista de alumnos</a>
+                    <a href="{{ url_for('get_alumnos_by_section_on_date', section_id=curso.id_seccion) }}" class="btn btn-primary">Tomar asistencia</a></td>
                 </tr>
                 {% endfor %}
             </table>
