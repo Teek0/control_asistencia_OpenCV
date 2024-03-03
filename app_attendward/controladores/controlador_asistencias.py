@@ -13,11 +13,11 @@ def generate():
     modelos_entrenados = []
     nombres_personas = []
 
-    for modelo_file in os.listdir(entrenamientos_ruta):
-        modelo_entrenado = cv2.face_EigenFaceRecognizer.create()
-        modelo_entrenado.read(os.path.join(entrenamientos_ruta, modelo_file))
-        modelos_entrenados.append(modelo_entrenado)
-        nombres_personas.append(os.path.splitext(os.path.basename(modelo_file))[0])
+    # for modelo_file in os.listdir(entrenamientos_ruta):
+    #     modelo_entrenado = cv2.face_EigenFaceRecognizer.create()
+    #     modelo_entrenado.read(os.path.join(entrenamientos_ruta, modelo_file))
+    #     modelos_entrenados.append(modelo_entrenado)
+    #     nombres_personas.append(os.path.splitext(os.path.basename(modelo_file))[0])
 
     cap = cv2.VideoCapture(0, cv2.CAP_DSHOW)
     face_detector = cv2.CascadeClassifier(cv2.data.haarcascades + 'haarcascade_frontalface_default.xml')
@@ -45,7 +45,7 @@ def generate():
                         cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
                         break  # Salir del bucle si se encuentra una persona
                 else:
-                    cv2.putText(frame, "No encontrado", (x, y - 20), 2, 0.7, (0, 255, 0), 1, cv2.LINE_AA)
+                    cv2.putText(frame, "No encontradox", (x, y - 20), 2, 0.7, (0, 255, 0), 1, cv2.LINE_AA)
                     cv2.rectangle(frame, (x, y), (x+w, y+h), (255, 0, 0), 2)
 
             (flag, encoded_image) = cv2.imencode(".jpg", frame)

@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -9,27 +10,96 @@
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="{{ url_for('static', filename='/css/styles.css') }}">
 </head>
+
 <body class="body">
-    <header class="header">
-        <ul>
-            <li><img src="{{ url_for('static', filename='/img/logoColor_banner.png') }}" alt="Logo UTEM"></li>
-            <li>
-                <h1 class="h1">CURSO CURSO</h1>
-            </li>
-            <li><button>Cerrar sesión</button></li>
-        </ul>
+    <!-- HEADER -->
+    <header class="header row justify-content-center vertical-center">
+        <div class="col-2"><a href="#" onclick="history.back();" class="btn btn-primary float-end text-center">Atrás</a>
+        </div>
+        <div class="col-2"><img src="{{ url_for('static', filename='/img/logoColor_banner.png') }}" alt="Logo UTEM">
+        </div>
+        <div class="col-4">
+            <h1 class="h1">CURSO CURSO</h1>
+        </div>
+        <div class="col-4"> <button class="btn btn-danger ">Cerrar sesión</button></div>
     </header>
+
+
     <main>
-        <h2>Fecha de hoy</h2>
+        <!-- FECHA -->
+        <div class="text-center date-container">
+            <h2>Fecha de hoy</h2>
+        </div>
+        <!-- CAMARA Y LISTA DE ASISTENCIA -->
+        <div class="row ">
+            <div class="col-6 ">
+                <div class=" video-container">
+                    <div class="frame-container text-center">
+                        <img id="video" class="img-fluid" src="{{ url_for('video_feed') }}" alt="Video en directo">
+                        <!-- <img id="video" class="img-fluid"
+                            src="https://images.wikidexcdn.net/mwuploads/wikidex/b/b2/latest/20230325202418/EP1234_Psyduck_de_Misty.png"
+                            alt="Video en directo"> -->
+
+                    </div>
+                    <div class="agregar-manualmente">
+                        <h4>Agregar asistencia manualmente:</h4>
+                        <form>
+                            <div class="row">
+                                <div class="col-md-9"> <!-- Input ocupa 9 de 12 columnas -->
+                                    <input type="text" class="form-control" id="rutInput"
+                                        placeholder="Rut: 12.345.678-9">
+                                </div>
+                                <div class="col-md-3"> <!-- Botón ocupa 3 de 12 columnas -->
+                                    <button type="submit" class="btn btn-success btn-block">Agregar</button>
+                                </div>
+                            </div>
+                        </form>
+
+
+                    </div>
+                </div>
+
+            </div>
+            <div class="col-5 asistencia-container">
+
+                <div class="row grid-container">
+                    <div class="col-sm">
+
+                        {% for i in range(100) %}
+                        <div class="row">
+                            <div class="col alumno-info">
+                                <label>Nombre Apellido</label>
+                                <p>xx.xxx.xxx-x</p>
+                            </div>
+                            <div class="col alumno-info">
+                                <label>Nombre Apellido</label>
+                                <p>xx.xxx.xxx-x</p>
+                            </div>
+                        </div>
+                        {% endfor %}
+
+                    </div>
+
+                    <div class="col-sm">
+
+                    </div>
+                </div>
+                <div>
+                    <form>
+                        <button type="submit" class="btn btn-primary mt-3">Finalizar y generar informe</button>
+                    </form>
+                </div>
+            </div>
+
+        </div>
         <div>
-            <h5>Video en directo</h5>
-            <img id="video" src="{{ url_for('video_feed') }}" alt="Video en directo">
+
         </div>
         <div>
             <h3>Asistencia</h3>
             <ul id="arreglo-list">
                 {% for item in arreglo %}
-                    <li>{{ item }}</li>
+                <li>{{ item }}</li>
                 {% endfor %}
             </ul>
         </div>
@@ -38,41 +108,67 @@
             <ul>
                 <li>Alumno nombre apellido</li>
             </ul>
+
         </div>
-        <form>
-            <h4>Agregar manualmente:</h4>
-            <label>Rut: </label>
-            <input type="text" placeholder="12.345.678-9">
-            <input type="submit" value="Agregar">
-        </form>
-        <form>
-            <input type="submit" value="Finalizar y generar informe">
-        </form>
+
     </main>
     <!-- Asegúrate de cargar los scripts necesarios al final del body -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-geWF76RCwLtnZ8qwWowPQNguL3RmwHVBC9FhGdlKrxdiJJigb/j/68SIy3Te4Bkz"
         crossorigin="anonymous"></script>
-        <script>
-            // Función para actualizar la lista
-            function actualizarLista() {
-                fetch('/listaDetectados')
-                    .then(response => response.json())
-                    .then(data => {
-                        const arregloList = document.getElementById('arreglo-list');
-                        arregloList.innerHTML = ''; // Limpiamos la lista antes de agregar los nuevos elementos
-                        data.arreglo.forEach(item => {
-                            const li = document.createElement('li');
-                            li.textContent = item;
-                            arregloList.appendChild(li);
-                        });
-                        console.log('Lista actualizada');
-                    })
-                    .catch(error => console.error('Error al obtener el arreglo:', error));
-            }
-        
-            // Actualizar la lista cada 1 segundo (1000 milisegundos)
-            setInterval(actualizarLista, 1000);
-        </script>
+    <script>
+        // Función para actualizar la lista
+        function actualizarLista() {
+            fetch('/listaDetectados')
+                .then(response => response.json())
+                .then(data => {
+                    const arregloList = document.getElementById('arreglo-list');
+                    arregloList.innerHTML = ''; // Limpiamos la lista antes de agregar los nuevos elementos
+                    data.arreglo.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = item;
+                        arregloList.appendChild(li);
+                    });
+                    console.log('Lista actualizada');
+                })
+                .catch(error => console.error('Error al obtener el arreglo:', error));
+        }
+
+        // Actualizar la lista cada 1 segundo (1000 milisegundos)
+        setInterval(actualizarLista, 1000);
+    </script>
 </body>
+
 </html>
+<style>
+    .date-container {
+        margin-top: 10px;
+        margin-bottom: 30px;
+    }
+
+    .asistencia-container {
+        background-color: aliceblue;
+    }
+
+    .video-container {
+        padding: 100px;
+    }
+
+    .frame-container {
+        padding: 20px;
+        background-color: white;
+
+
+    }
+
+    .grid-container {
+        max-height: 700px;
+        max-width: 800px;
+        background-color: gray;
+        overflow-y: auto;
+    }
+
+    .alumno-info {
+        background-color: rgb(148, 144, 144);
+    }
+</style>
