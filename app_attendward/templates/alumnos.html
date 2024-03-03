@@ -1,17 +1,31 @@
 <!DOCTYPE html>
 <html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Alumnos Inscritos</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
-</head>
-<body>
-    <header>
-        <header>
-            <h1>Lista de Alumnos Inscritos - {{ seccion.nombre_asignatura }} - Sección {{ seccion.seccion }}</h1>
-            <h2>{{ fecha_actual.day }} de {{ meses[fecha_actual.month] }} de {{ fecha_actual.year }}</h2> <!-- Muestra la fecha actual en formato "dd de mes de año" -->
-        </header>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Lista de cursos</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
+            integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
+        <link rel="stylesheet" href="{{url_for('static',filename='/css/styles.css')}}">
+    </head>
+<body class="body">
+    <header class="header">
+        <ul>
+            <li><img src="{{url_for('static',filename='/img/logoColor_banner.png')}}" alt="Logo UTEM"></li>
+            <li>
+                <h1 class="h1">BIENVENIDO {{session['nombre']}} {{session['apellido']}}</h1>
+            </li>
+            <li>
+                <form action="/logout" method="post">
+                    <button type="submit">Cerrar sesión</button>
+                </form>
+            </li>
+        </ul>
+    </header>
+    <div>
+        <h1>Lista de Alumnos Inscritos - {{ seccion.nombre_asignatura }} - Sección {{ seccion.seccion }}</h1>
+        <h2>{{ fecha_actual.day }} de {{ meses[fecha_actual.month] }} de {{ fecha_actual.year }}</h2> <!-- Muestra la fecha actual en formato "dd de mes de año" -->
+    </div>
     <main>
         <table>
             <caption></caption>

@@ -13,19 +13,19 @@
 
 <body class="body">
     <!-- HEADER -->
-    <header class="header row justify-content-center vertical-center">
-        <div class="col-2"><a href="#" onclick="history.back();" class="btn btn-primary float-end text-center">Atrás</a>
-        </div>
-        <div class="col-2"><img src="{{ url_for('static', filename='/img/logoColor_banner.png') }}" alt="Logo UTEM">
-        </div>
-        <div class="col-4">
-            <h1 class="h1">CURSO CURSO</h1>
-        </div>
-        <div class="col-4"> 
+    <header class="header">
+        <ul>
+            <!--<li><a href="#" onclick="history.back();" class="btn btn-primary float-end text-center">Atrás</a></li>-->
+            <li><img src="{{url_for('static',filename='/img/logoColor_banner.png')}}" alt="Logo UTEM"></li>
+            <li>
+                <h1 class="h1">SECCIÓN NOMBRE CURSO</h1>
+            </li>
+            <li>
                 <form action="/logout" method="post">
-                    <button class="btn btn-danger " type="submit">Cerrar sesión</button>
+                    <button type="submit" class="btn btn-secondary">Cerrar sesión</button>
                 </form>
-            </div>
+            </li>
+        </ul>
     </header>
 
 
@@ -149,10 +149,6 @@
         fechaHoyElement.textContent = fechaActual.toLocaleDateString('es-ES', options);
     </script>
 </body>
-</html>
-    </script>
-</body>
-
 </html>
 <style>
     .date-container {

@@ -2,20 +2,13 @@
     background-color: #E1EBFF;
 }
 
-.header {
-    background-color: #004C68;
-}
-
-.h1 {
-    color: white;
-}
-
 /* Login */
 .login_font{
     color: #006388;
+    margin-bottom: 25px;
 }
 
-section {
+.section {
     display: flex;
     flex-direction: column;
     justify-content: start;
@@ -33,7 +26,7 @@ section {
     background-color: white;
     margin: 15px;
     padding: 30px;
-    border-radius: 30px;
+    border-radius: 10px;
     box-shadow: 0px 0px 10px 0px rgba(0,0,0,0.35);
 }
 
@@ -46,18 +39,17 @@ section {
 .box{
     margin: 10px;
     padding: 10px 30px;
-    border-radius: 30px;
+    border-radius: 15px;
     border: 0px;
     background-color: #F5F5F5;
     font-size: small;
     
 }
 .button{
-    margin: 10px;
+    margin-top: 10px;
     padding: 10px 30px;
-    border-radius: 30px;
+    border-radius: 15px;
     border: 0px;
-    background-color: #00956D;
     color: white;
     font-weight: bold;
 }
@@ -86,24 +78,42 @@ section {
     margin-left: 5px;
 }
 
-/* Home */
+/* Header */
+
+.header {
+    background-color: #004C68;
+}
+
+.h1 {
+    color: white;
+}
+
+.header ul {
+    display: flex;
+    justify-content: space-around;
+    list-style: none;
+    padding: 20px;
+    margin: 0;
+    align-items: center;
+}
+
+
+
+
 
 table {
     border-collapse: collapse;
     width: 100%;
-  }
-  
-  th, td {
+}
+th, td {
     border: 1px solid #ddd;
     padding: 8px;
     text-align: left;
-  }
-  
-  tr:nth-child(even) {
+}
+tr:nth-child(even) {
     background-color: #f2f2f2;
-  }
-  
-  th {
+}
+th {
     background-color: #4CAF50;
     color: white;
-  }
+}
