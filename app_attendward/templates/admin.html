@@ -8,6 +8,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="{{url_for('static',filename='/css/styles.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='/css/admin.css')}}">
 </head>
 
 <body class="body">
@@ -25,8 +26,7 @@
         </ul>
     </header>
     <main>
-        <h2>Buscar:</h2>
-        <h2>Agregar:</h2>
+
         <div>
 
             <nav>
@@ -40,11 +40,58 @@
                 </div>
             </nav>
             <div class="tab-content" id="nav-tabContent">
-                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
+
+                <div class="tab-pane fade show active padding-page" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
+                    tabindex="0">
+                    <!-- Parte del formulario para buscar al alumno -->
+                    <h2>Buscar Alumno por Rut:</h2>
+                    <form action="/buscar_alumno" method="post">
+                        <div class="mb-3">
+                            <label for="rutInput" class="form-label">Rut sin puntos ni guión:</label>
+                            <input type="text" class="form-control" id="rutInput" name="rut"
+                                placeholder="Ingrese el Rut">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Buscar</button>
+                    </form>
+
+                    <!-- Sección para mostrar un mensaje cuando no se encuentren resultados -->
+                    {% if not resultados %}
+                    <div class="alert alert-info" role="alert">
+                        No se encuentra alumno con el rut proporcionado.
+                    </div>
+                    {% endif %}
+
+                    <!-- Sección para mostrar los resultados de la búsqueda -->
+                    {% if resultados %}
+                    <div class="alert alert-info" role="alert">
+                        {% for alumno in resultados %}
+                            Alumno encontrado: {{ alumno.nombre }} {{ alumno.apellido }}
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Formulario para agregar un nuevo alumno -->
+                    <h2>Agregar Nuevo Alumno:</h2>
+                    <form action="/crear_alumno" method="post">
+                        <div class="mb-3">
+                            <label for="nombreInput" class="form-label">Nombre:</label>
+                            <input type="text" class="form-control" id="nombreInput" name="nombre" placeholder="Ingrese el Nombre">
+                        </div>
+                        <div class="mb-3">
+                            <label for="apellidoInput" class="form-label">Apellido:</label>
+                            <input type="text" class="form-control" id="apellidoInput" name="apellido" placeholder="Ingrese el Apellido">
+                        </div>
+                        <div class="mb-3">
+                            <label for="rutNuevoInput" class="form-label">Rut:</label>
+                            <input type="text" class="form-control" id="rutNuevoInput" name="rut_nuevo" placeholder="Ingrese el Rut">
+                        </div>
+                        <button type="submit" class="btn btn-primary">Agregar Alumno</button>
+                    </form>
+                </div>
+
+                <div class="tab-pane fade padding-page" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"
                     tabindex="0">...</div>
-                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"
-                    tabindex="0">...</div>
-                <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab"
+                <div class="tab-pane fade padding-page" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab"
                     tabindex="0">...</div>
             </div>
 
@@ -55,4 +102,5 @@
 
     </main>
 </body>
+
 </html>

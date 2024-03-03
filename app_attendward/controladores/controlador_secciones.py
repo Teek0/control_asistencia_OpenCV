@@ -58,9 +58,7 @@ def generatex():
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encoded_image) + b'\r\n')
 
 
-@app.route('/admin', methods=['GET'])
-def admin_page():
-    return render_template('admin.html')
+
 
 
 @app.route('/cursos', methods=['GET'])
