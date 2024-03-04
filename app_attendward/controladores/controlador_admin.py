@@ -1,6 +1,7 @@
 from flask import render_template, request, redirect, url_for, flash
 from app_attendward import app
 from app_attendward.config.mysqlconnection import connectToMySQL
+import os
 
 @app.route('/admin', methods=['GET'])
 def admin_page():
@@ -9,6 +10,9 @@ def admin_page():
 
 @app.route('/buscar_alumno', methods=['POST'])
 def buscar_alumno():
+
+    entrenamientos_ruta = 'app_attendward/rfacial/entrenamientos'
+
     # Obtener el rut ingresado por el usuario desde el formulario
     rut = request.form.get('rut')
 
@@ -17,9 +21,17 @@ def buscar_alumno():
 
     # Consulta SQL para buscar al alumno por rut
     query = "SELECT * FROM alumnos WHERE rut = %s"
+
+    
     data = (rut,)
     resultados = db.query_db(query, data)
 
+    trainFound = False
+    for modelo_file in os.listdir(entrenamientos_ruta):
+        if int(rut) == int(os.path.splitext(os.path.basename(modelo_file))[0]):
+            trainFound = True
+
+    resultados = {"trainFound":trainFound,"resultados":resultados}
     # Renderizar la misma página admin.html con los resultados de la búsqueda
     return render_template('admin.html', resultados=resultados)
 

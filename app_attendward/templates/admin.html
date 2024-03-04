@@ -56,20 +56,29 @@
                     </form>
 
                     <!-- Sección para mostrar un mensaje cuando no se encuentren resultados -->
-                    {% if not resultados %}
-                    <div class="alert alert-info" role="alert">
-                        No se encuentra alumno con el rut proporcionado.
-                    </div>
-                    {% endif %}
+                    {% if resultados.trainFound != null %}
+                        {% if not resultados.resultados %}
+                        <div class="alert alert-info" role="alert">
+                            No se encuentra alumno con el rut proporcionado.
+                        </div>
 
-                    <!-- Sección para mostrar los resultados de la búsqueda -->
-                    {% if resultados %}
-                    <div class="alert alert-info" role="alert">
-                        {% for alumno in resultados %}
-                            Alumno encontrado: {{ alumno.nombre }} {{ alumno.apellido }}
-                        {% endfor %}
-                    </div>
+                        {% else %}
+                        <!-- Sección para mostrar los resultados de la búsqueda -->
+                        <div class="alert alert-info" role="alert">
+                            {% for alumno in resultados.resultados %}
+                                Alumno encontrado: {{ alumno.nombre }} {{ alumno.apellido }}
+                            {% endfor %}
+                            {% if resultados.trainFound %}
+                                - Entrenamiento encontrado
+                            {% else %}
+                                - No se encuentra entrenamiento
+                            {% endif %}
+                        </div>
+                        {% endif %}
+
+                        
                     {% endif %}
+                    
                     
                     <!-- Formulario para agregar un nuevo alumno -->
                     <h2>Agregar Nuevo Alumno:</h2>
