@@ -1,4 +1,4 @@
-from flask import render_template, Response
+from flask import render_template, Response, jsonify
 from app_attendward import app
 from app_attendward.config.mysqlconnection import connectToMySQL
 from datetime import datetime
@@ -81,6 +81,8 @@ def get_alumnos_by_section_on_date(section_id):
     for alumno in alumnos_data:
         aux_list.append(alumno)
     global listaDeEstudiantes
+    global listaDeDetectados
+    listaDeDetectados = []
     listaDeEstudiantes = aux_list 
     # Cerrar la conexión manualmente
     mysql.close_connection()
@@ -117,3 +119,7 @@ def get_alumnos_by_section(section_id):
     alumnos_data = mysql.query_db(alumnos_query, (section_id,))
     mysql.close_connection()
     return render_template('listado_seccion.html', seccion=section_data[0], alumnos=alumnos_data)
+
+@app.route('/listaDetectados', methods=['GET'])
+def return_list():
+    return jsonify(arreglo=listaDeDetectados)

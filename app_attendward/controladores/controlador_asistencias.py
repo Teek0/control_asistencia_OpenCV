@@ -61,6 +61,3 @@ def get_all_alumnos():
 def video_feed():
     return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
-@app.route('/listaDetectados', methods=['GET'])
-def return_list():
-    return jsonify(arreglo=listaDeDetectados)

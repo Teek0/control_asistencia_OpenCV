@@ -123,3 +123,9 @@ th {
     background-color: #4CAF50;
     color: white;
 }
+
+.video-container{
+    display:flex;
+    justify-content: center;
+    padding: 10px;
+}
