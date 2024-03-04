@@ -43,7 +43,7 @@ def crear_alumno():
     rut = request.form.get('rut_nuevo')
     # Validar que todos los campos estén llenos
     if not nombre or not apellido or not rut:
-        # Si alguno de los campos está vacío, redireccionar a la página admin con un mensaje de error
+        # Si algún campo está vacío, enviar un mensaje de error y redireccionar a la página admin
         flash('Todos los campos son obligatorios', 'error')
         return redirect(url_for('admin_page'))
     # Crear una conexión a la base de datos

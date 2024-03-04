@@ -17,7 +17,7 @@
             <li><a href="#" onclick="history.back();" class="btn btn-primary float-end text-center">Atrás</a></li>
             <li><img src="{{url_for('static',filename='/img/logoColor_banner.png')}}" alt="Logo UTEM"></li>
             <li>
-                <h1 class="h1">BIENVENIDO ADMIN</h1>
+                <h1 class="h1">Administrar</h1>
             </li>
             <li>
                 <form action="/logout" method="post">
@@ -26,20 +26,22 @@
             </li>
         </ul>
     </header>
+
     <main>
         <!-- Aquí colocamos el bloque para manejar los mensajes flash -->
         <div class="container">
             {% with messages = get_flashed_messages(with_categories=true) %}
-                {% if messages %}
-                    {% for category, message in messages %}
-                        <div class="alert alert-{{ category }}">
-                            {{ message }}
-                        </div>
-                    {% endfor %}
-                {% endif %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
             {% endwith %}
         </div>
-        <div>
+
+        <div class="etiquetas">
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
@@ -50,68 +52,77 @@
                         type="button" role="tab" aria-controls="nav-contact" aria-selected="false">Ramo</button>
                 </div>
             </nav>
+
             <div class="tab-content" id="nav-tabContent">
 
-                <div class="tab-pane fade show active padding-page" id="nav-home" role="tabpanel"
+                <div class="tab-pane fade show active padding-page contenedor" id="nav-home" role="tabpanel"
                     aria-labelledby="nav-home-tab" tabindex="0">
-                    <!-- Parte del formulario para buscar al alumno -->
-                    <h2>Buscar Alumno:</h2>
-                    <form action="/buscar_alumno" method="post">
-                        <div class="mb-3">
-                            <label for="rutInput" class="form-label">Rut sin puntos ni guión:</label>
-                            <input type="text" class="form-control" id="rutInput" name="rut" placeholder="12345678">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Buscar</button>
-                    </form>
 
-                    <!-- Sección para mostrar un mensaje cuando no se encuentren resultados -->
-                    {% if resultados %}
-                    {% if not resultados.resultados %}
-                    <div class="alert alert-info" role="alert">
-                        No se encuentra alumno con el rut proporcionado.
-                    </div>
-                    {% else %}
-                    <!-- Sección para mostrar los resultados de la búsqueda -->
-                    <div class="alert alert-info" role="alert">
-                        {% for alumno in resultados.resultados %}
-                        Alumno encontrado: {{ alumno.nombre }} {{ alumno.apellido }}
-                        {% endfor %}
-                        {% if resultados.train_found %}
-                        - Entrenamiento encontrado.
-                        {% else %}
-                        - No se encuentra entrenamiento.
-                        <form action="/entrenar" method="post">
-                            <input type="hidden" name="rut" value="{{ resultados.resultados[0].rut }}">
-                            <button type="submit" class="btn btn-primary">Entrenar</button>
+
+                    <div class="izquierda flex-fill">
+                        <!-- Parte del formulario para buscar al alumno -->
+                        <h2>Buscar Alumno:</h2>
+                        <form action="/buscar_alumno" method="post">
+                            <div class="mb-3">
+                                <label for="rutInput" class="form-label">Rut sin puntos ni guión:</label>
+                                <input type="text" class="form-control" id="rutInput" name="rut" placeholder="12345678"
+                                    maxlength="8">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Buscar</button>
                         </form>
+                        <!-- Sección para mostrar un mensaje cuando no se encuentren resultados -->
+                        {% if resultados %}
+                        {% if not resultados.resultados %}
+                        <div class="alert alert-info" role="alert">
+                            No se encuentra alumno con el rut proporcionado.
+                        </div>
+                        {% else %}
+                        <!-- Sección para mostrar los resultados de la búsqueda -->
+                        <div class="alert alert-info" role="alert">
+                            {% for alumno in resultados.resultados %}
+                            Alumno encontrado: {{ alumno.nombre }} {{ alumno.apellido }}
+                            {% endfor %}
+                            {% if resultados.train_found %}
+                            - Entrenamiento encontrado.
+                            {% else %}
+                            - No se encuentra entrenamiento.
+                            <form action="/entrenar" method="post">
+                                <input type="hidden" name="rut" value="{{ resultados.resultados[0].rut }}">
+                                <button type="submit" class="btn btn-primary">Entrenar</button>
+                            </form>
+                            {% endif %}
+
+                        </div>
                         {% endif %}
-                        
+                        {% endif %}
                     </div>
-                    {% endif %}
-                    {% endif %}
 
+                    <div class="derecha flex-fill">
+                        <!-- Formulario para agregar un nuevo alumno -->
+                        <h2>Agregar Nuevo Alumno:</h2>
+                        <form action="/crear_alumno" method="post">
+                            <div class="mb-3">
+                                <label for="nombreInput" class="form-label">Nombre:</label>
+                                <input type="text" class="form-control" id="nombreInput" name="nombre"
+                                    placeholder="Ingrese el Nombre">
+                            </div>
+                            <div class="mb-3">
+                                <label for="apellidoInput" class="form-label">Apellido:</label>
+                                <input type="text" class="form-control" id="apellidoInput" name="apellido"
+                                    placeholder="Ingrese el Apellido">
+                            </div>
+                            <div class="mb-3">
+                                <label for="rutNuevoInput" class="form-label">Rut:</label>
+                                <input type="text" class="form-control" id="rutNuevoInput" name="rut_nuevo"
+                                    placeholder="Ingrese el Rut" maxlength="8">
+                            </div>
+                            <button type="submit" class="btn btn-primary">Agregar Alumno</button>
+                        </form>
+                    </div>
 
-                    <!-- Formulario para agregar un nuevo alumno -->
-                    <h2>Agregar Nuevo Alumno:</h2>
-                    <form action="/crear_alumno" method="post">
-                        <div class="mb-3">
-                            <label for="nombreInput" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="nombreInput" name="nombre"
-                                placeholder="Ingrese el Nombre">
-                        </div>
-                        <div class="mb-3">
-                            <label for="apellidoInput" class="form-label">Apellido:</label>
-                            <input type="text" class="form-control" id="apellidoInput" name="apellido"
-                                placeholder="Ingrese el Apellido">
-                        </div>
-                        <div class="mb-3">
-                            <label for="rutNuevoInput" class="form-label">Rut:</label>
-                            <input type="text" class="form-control" id="rutNuevoInput" name="rut_nuevo"
-                                placeholder="Ingrese el Rut">
-                        </div>
-                        <button type="submit" class="btn btn-primary">Agregar Alumno</button>
-                    </form>
                 </div>
+
+
 
                 <div class="tab-pane fade padding-page" id="nav-profile" role="tabpanel"
                     aria-labelledby="nav-profile-tab" tabindex="0">...</div>
