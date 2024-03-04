@@ -27,9 +27,19 @@
         </ul>
     </header>
     <main>
-
+        <!-- Aquí colocamos el bloque para manejar los mensajes flash -->
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
         <div>
-
             <nav>
                 <div class="nav nav-tabs" id="nav-tab" role="tablist">
                     <button class="nav-link active" id="nav-home-tab" data-bs-toggle="tab" data-bs-target="#nav-home"
@@ -42,67 +52,71 @@
             </nav>
             <div class="tab-content" id="nav-tabContent">
 
-                <div class="tab-pane fade show active padding-page" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab"
-                    tabindex="0">
+                <div class="tab-pane fade show active padding-page" id="nav-home" role="tabpanel"
+                    aria-labelledby="nav-home-tab" tabindex="0">
                     <!-- Parte del formulario para buscar al alumno -->
-                    <h2>Buscar Alumno por Rut:</h2>
+                    <h2>Buscar Alumno:</h2>
                     <form action="/buscar_alumno" method="post">
                         <div class="mb-3">
                             <label for="rutInput" class="form-label">Rut sin puntos ni guión:</label>
-                            <input type="text" class="form-control" id="rutInput" name="rut"
-                                placeholder="Ingrese el Rut">
+                            <input type="text" class="form-control" id="rutInput" name="rut" placeholder="12345678">
                         </div>
                         <button type="submit" class="btn btn-primary">Buscar</button>
                     </form>
 
                     <!-- Sección para mostrar un mensaje cuando no se encuentren resultados -->
-                    {% if resultados.trainFound != null %}
-                        {% if not resultados.resultados %}
-                        <div class="alert alert-info" role="alert">
-                            No se encuentra alumno con el rut proporcionado.
-                        </div>
-
+                    {% if resultados %}
+                    {% if not resultados.resultados %}
+                    <div class="alert alert-info" role="alert">
+                        No se encuentra alumno con el rut proporcionado.
+                    </div>
+                    {% else %}
+                    <!-- Sección para mostrar los resultados de la búsqueda -->
+                    <div class="alert alert-info" role="alert">
+                        {% for alumno in resultados.resultados %}
+                        Alumno encontrado: {{ alumno.nombre }} {{ alumno.apellido }}
+                        {% endfor %}
+                        {% if resultados.train_found %}
+                        - Entrenamiento encontrado.
                         {% else %}
-                        <!-- Sección para mostrar los resultados de la búsqueda -->
-                        <div class="alert alert-info" role="alert">
-                            {% for alumno in resultados.resultados %}
-                                Alumno encontrado: {{ alumno.nombre }} {{ alumno.apellido }}
-                            {% endfor %}
-                            {% if resultados.trainFound %}
-                                - Entrenamiento encontrado
-                            {% else %}
-                                - No se encuentra entrenamiento
-                            {% endif %}
-                        </div>
+                        - No se encuentra entrenamiento.
+                        <form action="/entrenar" method="post">
+                            <input type="hidden" name="rut" value="{{ resultados.resultados[0].rut }}">
+                            <button type="submit" class="btn btn-primary">Entrenar</button>
+                        </form>
                         {% endif %}
-
                         
+                    </div>
                     {% endif %}
-                    
-                    
+                    {% endif %}
+
+
                     <!-- Formulario para agregar un nuevo alumno -->
                     <h2>Agregar Nuevo Alumno:</h2>
                     <form action="/crear_alumno" method="post">
                         <div class="mb-3">
                             <label for="nombreInput" class="form-label">Nombre:</label>
-                            <input type="text" class="form-control" id="nombreInput" name="nombre" placeholder="Ingrese el Nombre">
+                            <input type="text" class="form-control" id="nombreInput" name="nombre"
+                                placeholder="Ingrese el Nombre">
                         </div>
                         <div class="mb-3">
                             <label for="apellidoInput" class="form-label">Apellido:</label>
-                            <input type="text" class="form-control" id="apellidoInput" name="apellido" placeholder="Ingrese el Apellido">
+                            <input type="text" class="form-control" id="apellidoInput" name="apellido"
+                                placeholder="Ingrese el Apellido">
                         </div>
                         <div class="mb-3">
                             <label for="rutNuevoInput" class="form-label">Rut:</label>
-                            <input type="text" class="form-control" id="rutNuevoInput" name="rut_nuevo" placeholder="Ingrese el Rut">
+                            <input type="text" class="form-control" id="rutNuevoInput" name="rut_nuevo"
+                                placeholder="Ingrese el Rut">
                         </div>
                         <button type="submit" class="btn btn-primary">Agregar Alumno</button>
                     </form>
                 </div>
 
-                <div class="tab-pane fade padding-page" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab"
-                    tabindex="0">...</div>
-                <div class="tab-pane fade padding-page" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab"
-                    tabindex="0">...</div>
+                <div class="tab-pane fade padding-page" id="nav-profile" role="tabpanel"
+                    aria-labelledby="nav-profile-tab" tabindex="0">...</div>
+                <div class="tab-pane fade padding-page" id="nav-contact" role="tabpanel"
+                    aria-labelledby="nav-contact-tab" tabindex="0">...</div>
             </div>
 
         </div>

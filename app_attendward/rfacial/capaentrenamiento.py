@@ -2,34 +2,34 @@ import cv2 as cv
 import os
 import numpy as np
 
-dataRuta = 'app_attendward/rfacial/DATA'
-listaData = os.listdir(dataRuta)
+data_ruta = 'app_attendward/rfacial/DATA'
+lista_data = os.listdir(data_ruta)
 # Crear una lista para almacenar modelos de entrenamiento
 modelos_entrenados = []
 
-for persona in listaData:
-    rutaCompleta = dataRuta + '/' + persona
+for persona in lista_data:
+    ruta_completa = data_ruta + '/' + persona
     print('Leyendo las imágenes de: ', persona, '...')
     
     # Crear una instancia de EigenFaceRecognizer para cada persona
-    entrenamientoEigenFaceRecognizer = cv.face_EigenFaceRecognizer.create()
+    entrenamiento_eigen_face_recognizer = cv.face_EigenFaceRecognizer.create()
     
     ids = []
-    rostrosData = []
+    rostros_data = []
     id = 0
 
-    for archivo in os.listdir(rutaCompleta):
+    for archivo in os.listdir(ruta_completa):
         ids.append(id)
-        rostrosData.append(cv.imread(os.path.join(rutaCompleta, archivo), 0))
+        rostros_data.append(cv.imread(os.path.join(ruta_completa, archivo), 0))
         id += 1
 
-    entrenamientoEigenFaceRecognizer.train(rostrosData, np.array(ids))
+    entrenamiento_eigen_face_recognizer.train(rostros_data, np.array(ids))
     
     # Guardar el modelo en un archivo
     modelo_file = f"modelo_{persona}.xml"
-    entrenamientoEigenFaceRecognizer.save(os.path.join('app_attendward/rfacial/entrenamientos', modelo_file))
+    entrenamiento_eigen_face_recognizer.save(os.path.join('app_attendward/rfacial/entrenamientos', modelo_file))
     
-    modelos_entrenados.append(entrenamientoEigenFaceRecognizer)
+    modelos_entrenados.append(entrenamiento_eigen_face_recognizer)
 
 print("Entrenamiento concluido.")
 

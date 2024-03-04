@@ -5,15 +5,15 @@ from time import time
 
 modelo = '18085868'
 ruta1 = 'app_attendward/rfacial/DATA'
-rutacompleta = ruta1+'/'+modelo
+ruta_completa = ruta1+'/'+modelo
 
-if not os.path.exists(rutacompleta):
-    os.makedirs(rutacompleta)
+if not os.path.exists(ruta_completa):
+    os.makedirs(ruta_completa)
 
 camara = cv.VideoCapture(0)
 print("camara lista")
 ruidos = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')    # detector de rostros
-tiempoInicial = time()
+tiempo_inicial = time()
 
 id = 1
 while True:
@@ -33,7 +33,7 @@ while True:
         rostrocapturado = idcaptura[y:y+e2, x:x+e1]   # rostro capturado
         rostrocapturado = cv.resize(
             rostrocapturado, (160, 160), interpolation=cv.INTER_CUBIC)  # redimensiona
-        cv.imwrite(rutacompleta+'/imagen_{}.jpg'.format(id),
+        cv.imwrite(ruta_completa+'/imagen_{}.jpg'.format(id),
                 rostrocapturado)  # guarda imagen
         id = id+1
 
@@ -41,6 +41,6 @@ while True:
 
     if id == 26:
         break
-print("Tiempo de captura: ", round(time() - tiempoInicial, 1), " segundos")
+print("Tiempo de captura: ", round(time() - tiempo_inicial, 1), " segundos")
 camara.release()
 cv.destroyAllWindows()
