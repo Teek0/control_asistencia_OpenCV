@@ -105,7 +105,7 @@ def entrenar_modelo():
 
         cv.imshow("Resultado", captura)
 
-        if id == 26:
+        if id == 251:
             break
     print("Tiempo de captura: ", round(time() - tiempo_inicial, 1), " segundos")
     camara.release()

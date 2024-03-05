@@ -1,4 +1,4 @@
-from app_attendward.controladores import controlador_admin, controlador_secciones,controlador_asistencias,controlador_login
+from app_attendward.controladores import controlador_admin, controlador_secciones,controlador_login
 from app_attendward import app
 
 if __name__ == "__main__":
