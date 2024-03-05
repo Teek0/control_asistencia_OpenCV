@@ -7,6 +7,9 @@ pip install pipenv
 
 
 pipenv install flask pymysql flask-bcrypt opencv-contrib-python imutils
+pip install pandas
+pip install openpyxl
+pip install xlsxwriter
 
 
 #pipenv shell

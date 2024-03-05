@@ -14,7 +14,9 @@
 <body class="body">
     <header class="header">
         <ul>
-            <a href="#" onclick="history.back();" class="btn btn-primary float-end text-center">Atrás</a>
+            <form method="GET" action="/cursos">
+                <input class="btn btn-primary float-end text-center" type="submit" value="Atrás">
+            </form>
             <li><img src="{{url_for('static',filename='/img/logoColor_banner.png')}}" alt="Logo UTEM"></li>
             <li>
                 <h1 class="h1">Asistencia:</h1>
@@ -43,31 +45,27 @@
             {% endif %}
             {% endwith %}
         </div>
+        <button id="btn" class="btn btn-primary">Generar documento</button>
         <div class="col-sm">
+            <div class="info">
+                <h4>Agregar asistencia manualmente:</h4>
+            </div>
+            <div class="info">
+                <div class="row">
+                    <div class="col-md-9">
+                        <input type="text" class="form-control" id="rutInput" placeholder="Rut: 12345678"
+                            maxlength="8">
+                    </div>
+                    <div class="col-md-3">
+                        <button id="agregarAsistenciaBtn" class="btn btn-success btn-block">Agregar</button>
+                    </div>
+                </div>
+            </div>
             <div class="video-container">
                 <img id="video" class="img-fluid" src="{{ url_for('video_feedx') }}" alt="Video en directo">
-
             </div>
-            <div>
-                <div class="info">
-                    <h4>Agregar asistencia manualmente:</h4>
-                </div>
-                <div class="info">
-                    <form id="agregarAsistenciaForm" action="{{ url_for('agregar_asistencia_manual', section_id=seccion.id_seccion) }}" method="POST">
-                        <div class="row">
-                            <div class="col-md-9">
-                                <input type="text" class="form-control" id="rutInput" name="rut_alumno" placeholder="Rut: 12345678" maxlength="8">
-                            </div>
-                            <div class="col-md-3">
-                                <button type="submit" class="btn btn-success btn-block">Agregar</button>
-                            </div>
-                        </div>
-                    </form>
-                </div>
 
 
-
-            </div>
             <div class="info">
                 <img src="{{url_for('static',filename='/img/exclamationCircle.png')}}" alt="Información">
                 <p>Para agregar a un alumno no registrado en la lista, por favor contacte a un administrador.</p>
@@ -99,17 +97,54 @@
     </main>
 </body>
 <script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Agrega un escuchador de eventos para el clic del botón "Agregar"
+        document.getElementById("agregarAsistenciaBtn").addEventListener("click", function (event) {
+            // Evita que el formulario se envíe normalmente
+            event.preventDefault();
+
+            // Obtiene el valor ingresado en el campo de entrada
+            const rutInput = document.getElementById("rutInput").value.trim();
+
+            // Verifica si el valor no está vacío
+            if (rutInput !== "") {
+                // Envía el valor al servidor a través de una solicitud AJAX
+                fetch('/agregar_manualmente', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ rut: rutInput })
+                })
+                    .then(response => {
+                        if (response.ok) {
+                            // La operación se realizó correctamente, actualiza la tabla si es necesario
+                            updateTable();
+                        } else {
+                            console.error('Error al agregar manualmente el valor.');
+                        }
+                    })
+                    .catch(error => console.error('Error al enviar la solicitud:', error));
+
+                // Borra el campo de entrada después de agregar el valor
+                document.getElementById("rutInput").value = "";
+            } else {
+                alert("Por favor ingresa un valor válido antes de agregarlo.");
+            }
+        });
+    });
+
     // Función para actualizar la tabla con los ruts recibidos del backend
     function updateTable() {
-        // Realizar una solicitud al endpoint /video_feed
+        // Realiza una solicitud al endpoint /listaDetectados
         fetch('/listaDetectados')
             .then(response => response.json())
             .then(data => {
-                // Obtener los ruts del arreglo recibido del backend
+                // Obtiene los ruts del arreglo recibido del backend
                 const ruts = data.arreglo;
-                console.log(ruts.arreglo)
+                console.log(ruts); // Imprime la lista de ruts recibidos del backend
                 if (ruts.length > 0) {
-                    // Iterar sobre los elementos de la tabla y cambiar el color de los ruts coincidentes
+                    // Itera sobre los elementos de la tabla y cambia el color de los ruts coincidentes
                     const tableRows = document.querySelectorAll('#tabla-alumnos tr');
 
                     tableRows.forEach(row => {
@@ -123,8 +158,42 @@
             .catch(error => console.error('Error al actualizar la tabla:', error));
     }
 
-    // Llamar a la función updateTable() cada segundo
+    // Llama a la función updateTable() cada segundo
     setInterval(updateTable, 1000);
-</script>
 
+</script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Agrega un escuchador de eventos para el clic del botón "Generar documento"
+        document.getElementById("btn").addEventListener("click", function (event) {
+            // Evita que el formulario se envíe normalmente
+            event.preventDefault();
+
+            // Realiza una solicitud AJAX al servidor para generar el documento Excel
+            fetch('/generar_documento_excel', {
+                method: 'POST'
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Descarga el archivo Excel generado
+                    return response.blob();
+                } else {
+                    console.error('Error al generar el documento Excel.');
+                }
+            })
+            .then(blob => {
+                // Crea un enlace temporal para descargar el archivo
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.style.display = 'none';
+                a.href = url;
+                a.download = 'alumnos_detectados.xlsx';
+                document.body.appendChild(a);
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(error => console.error('Error al generar el documento Excel:', error));
+        });
+    });
+</script>
 </html>

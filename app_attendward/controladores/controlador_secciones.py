@@ -1,9 +1,11 @@
-from flask import flash, redirect, render_template, Response, jsonify, request, url_for
+from flask import flash, redirect, render_template, Response, jsonify, request, url_for, send_file
 from app_attendward import app
 from app_attendward.config.mysqlconnection import connectToMySQL
 from datetime import datetime
 import cv2
 import os
+import pandas as pd
+from itertools import cycle
 
 entrenamientos_ruta = 'app_attendward/rfacial/entrenamientos'
 
@@ -57,7 +59,14 @@ def generate():
                 continue
             yield (b'--frame\r\n' b'Content-Type: image/jpeg\r\n\r\n' + bytearray(encoded_image) + b'\r\n')
 
+def calcular_digito_verificador(rut):
+    reversed_digits = map(int, reversed(str(rut)))
+    factors = cycle(range(2, 8))
+    s = sum(d * f for d, f in zip(reversed_digits, factors))
+    return (-s) % 11 if s % 11 > 1 else 'K'
 
+def agregar_digito_verificador(rut):
+    return f"{rut}-{calcular_digito_verificador(rut)}"
 
 @app.route('/captura_asistencia', methods=['GET'])
 def get_all_alumnos():
@@ -105,6 +114,27 @@ def get_alumnos_by_section_on_date(section_id):
         12: 'diciembre'
     }
     return render_template('alumnos.html', seccion=section_data[0], alumnos=alumnos_data, fecha_actual=fecha_actual, meses=meses)
+
+@app.route('/agregar_manualmente', methods=['POST'])
+def agregar_manualmente():
+    # Obtén el valor enviado desde el cliente
+    data = request.json
+    rut = data.get('rut')
+
+    # Verifica si el RUT está inscrito
+    mysql = connectToMySQL('attend_bd')
+    inscrito_query = "SELECT * FROM alumnos WHERE rut = %s;"
+    inscrito_data = mysql.query_db(inscrito_query, (rut,))
+    mysql.close_connection()
+
+    if inscrito_data:
+        # Agrega el valor a la lista listaDeDetectados
+        listaDeDetectados.append(rut)
+        # Retorna una respuesta exitosa al cliente
+        return 'Valor agregado correctamente', 200
+    else:
+        # Retorna un mensaje de error si el RUT no está inscrito
+        return 'El RUT no se encuentra inscrito', 400
 
 @app.route('/video_feedx', methods=['GET'])
 def video_feedx():
@@ -185,3 +215,60 @@ def agregar_asistencia_manual(section_id):
     flash('Asistencia agregada exitosamente', 'success')
     
     return redirect(url_for('get_alumnos_by_section_on_date', section_id=section_id))
+
+@app.route('/generar_documento_excel', methods=['POST'])
+def generar_documento_excel():
+    # Crear un DataFrame con los datos de los alumnos detectados
+    df_ruts = pd.DataFrame(listaDeDetectados, columns=['RUT'])
+    
+    # Agregar el dígito verificador a cada RUT
+    df_ruts['RUT'] = df_ruts['RUT'].apply(agregar_digito_verificador)
+    
+    # Conexión a la base de datos
+    mysql = connectToMySQL('attend_bd')
+    
+    # Consultar la base de datos para obtener los nombres y apellidos de los alumnos
+    nombres_apellidos = []
+    for rut in listaDeDetectados:
+        query = "SELECT nombre, apellido FROM alumnos WHERE rut = %s;"
+        data = (rut,)
+        resultado = mysql.query_db(query, data)
+        if resultado:
+            nombres_apellidos.append(resultado[0])
+        else:
+            nombres_apellidos.append({'nombre': 'Desconocido', 'apellido': 'Desconocido'})
+    
+    # Crear un DataFrame con los nombres y apellidos obtenidos
+    df_nombres_apellidos = pd.DataFrame(nombres_apellidos)
+    
+    # Unir los DataFrames de RUTs y nombres/apellidos
+    df = pd.concat([df_ruts, df_nombres_apellidos], axis=1)
+    
+    # Agregar la fecha actual como un título en el archivo Excel
+    fecha_actual = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+    titulo_fecha = f'Fecha de generación del documento: {fecha_actual}'
+    
+    # Nombre del archivo Excel a generar
+    excel_filename = 'alumnos_detectados.xlsx'
+    
+    # Obtener la ruta completa al directorio de trabajo actual
+    directorio_trabajo = os.getcwd()
+    
+    # Ruta completa del archivo Excel
+    excel_filepath = os.path.join(directorio_trabajo, excel_filename)
+    
+    # Crear un escritor para el archivo Excel
+    writer = pd.ExcelWriter(excel_filepath, engine='xlsxwriter')
+    
+    # Guardar el DataFrame en el archivo Excel
+    df.to_excel(writer, index=False)
+    
+    # Agregar la fecha como un título en una celda específica
+    worksheet = writer.sheets['Sheet1']
+    worksheet.write('D1', titulo_fecha)
+    
+    # Cerrar el escritor
+    writer.close()
+    
+    # Devolver el archivo Excel como respuesta
+    return send_file(excel_filepath, as_attachment=True)
