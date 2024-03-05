@@ -44,7 +44,7 @@
                     <td>{{ curso.horario }}</td>
                     <td>
                         <a href="{{ url_for('get_alumnos_by_section_on_date', section_id=curso.id_seccion) }}" class="btn btn-primary">Tomar asistencia</a>
-                        <a href="{{ url_for('get_alumnos_by_section', section_id=curso.id_seccion) }}" class="btn btn-info">Lista de alumnos</a>
+                        <a href="{{ url_for('get_alumnos_by_section', section_id=curso.id_seccion) }}" class="btn btn-info btn-sm">Agregar alumnos</a>
                     </td>
                 </tr>
                 {% endfor %}
