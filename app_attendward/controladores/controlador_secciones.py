@@ -10,7 +10,7 @@ entrenamientos_ruta = 'app_attendward/rfacial/entrenamientos'
 listaDeDetectados = []
 listaDeEstudiantes = []
 
-def generatex():
+def generate():
     modelos_entrenados = []
     nombres_personas = []
 
@@ -108,7 +108,7 @@ def get_alumnos_by_section_on_date(section_id):
 
 @app.route('/video_feedx', methods=['GET'])
 def video_feedx():
-    return Response(generatex(), mimetype='multipart/x-mixed-replace; boundary=frame')
+    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 @app.route('/listado_seccion/<int:section_id>', methods=['GET'])
 def get_alumnos_by_section(section_id):

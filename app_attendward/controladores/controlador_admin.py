@@ -67,7 +67,7 @@ def crear_alumno():
 
 
 @app.route('/entrenar', methods=['POST'])
-def entrenar_modelo():
+def entrenar_modelo_alumno():
     # Configuración para el entrenamiento
     rut = request.form.get('rut')
     modelo = rut
