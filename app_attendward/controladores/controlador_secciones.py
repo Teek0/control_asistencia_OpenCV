@@ -136,7 +136,6 @@ def agregar_alumno_seccion(section_id):
     query = "SELECT * FROM alumnos WHERE rut = %s"
     data = (rut,)
     resultado = db.query_db(query, data)
-    print("DATOS AQUIIIIIIIIIIIIIIIIIII--------!!!",resultado)
     if not resultado:
         flash('El rut proporcionado no está registrado', 'error')
         return redirect(url_for('get_alumnos_by_section', section_id=section_id))
@@ -148,7 +147,6 @@ def agregar_alumno_seccion(section_id):
     # Consulta SQL para verificar si el alumno ya está inscrito en la sección
     query = "SELECT * FROM inscritos WHERE id_seccion = %s AND id_alumno = %s"
     data = (section_id, id_alumno)
-    print("DATOS AQUIIIIIIIIIIIIIIIIIII--------!!!",data)
     resultado = db.query_db(query, data)
     if resultado:
         flash('El alumno ya está inscrito en la sección', 'error')
@@ -162,3 +160,28 @@ def agregar_alumno_seccion(section_id):
     db.close_connection()
     return redirect(url_for('get_alumnos_by_section', section_id=section_id))
 
+@app.route('/agregar_asistencia_manual/<int:section_id>', methods=['POST'])
+def agregar_asistencia_manual(section_id):
+    rut = request.form.get('rut_alumno')
+    query_alumno_id = "SELECT id_alumno FROM alumnos WHERE rut = %s"
+    data = (rut,)
+    db = connectToMySQL('attend_bd')
+    alumno_resultado = db.query_db(query_alumno_id, data)
+
+    if not alumno_resultado:
+        flash('El Rut proporcionado no está registrado', 'error')
+        return redirect(url_for('get_alumnos_by_section_on_date', section_id=section_id))
+    
+    id_alumno = alumno_resultado[0]['id_alumno']
+
+    # Consulta SQL para insertar la asistencia manualmente
+    query_insert_asistencia = "INSERT INTO asistencias (id_seccion, id_alumno) VALUES (%s, %s)"
+    data_insert_asistencia = (section_id, id_alumno)
+    db.query_db(query_insert_asistencia, data_insert_asistencia)
+    
+    # Cerrar la conexión manualmente
+    db.close_connection()
+
+    flash('Asistencia agregada exitosamente', 'success')
+    
+    return redirect(url_for('get_alumnos_by_section_on_date', section_id=section_id))

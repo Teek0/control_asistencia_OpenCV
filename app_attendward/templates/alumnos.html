@@ -31,6 +31,18 @@
         <h2>{{ fecha_actual.day }} de {{ meses[fecha_actual.month] }} de {{ fecha_actual.year }}</h2>
     </div>
     <main class="row">
+        <!-- Aquí colocamos el bloque para manejar los mensajes flash -->
+        <div class="container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">
+                {{ message }}
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+        </div>
         <div class="col-sm">
             <div class="video-container">
                 <img id="video" class="img-fluid" src="{{ url_for('video_feedx') }}" alt="Video en directo">
@@ -41,12 +53,12 @@
                     <h4>Agregar asistencia manualmente:</h4>
                 </div>
                 <div class="info">
-                    <form>
+                    <form id="agregarAsistenciaForm" action="{{ url_for('agregar_asistencia_manual', section_id=seccion.id_seccion) }}" method="POST">
                         <div class="row">
-                            <div class="col-md-9"> <!-- Input ocupa 9 de 12 columnas -->
-                                <input type="text" class="form-control" id="rutInput" placeholder="Rut: 12.345.678-9">
+                            <div class="col-md-9">
+                                <input type="text" class="form-control" id="rutInput" name="rut_alumno" placeholder="Rut: 12345678" maxlength="8">
                             </div>
-                            <div class="col-md-3"> <!-- Botón ocupa 3 de 12 columnas -->
+                            <div class="col-md-3">
                                 <button type="submit" class="btn btn-success btn-block">Agregar</button>
                             </div>
                         </div>
