@@ -9,6 +9,9 @@ from itertools import cycle
 
 entrenamientos_ruta = 'app_attendward/rfacial/entrenamientos'
 
+if not os.path.exists(entrenamientos_ruta):
+    os.makedirs(entrenamientos_ruta)
+
 listaDeDetectados = []
 listaDeEstudiantes = []
 
@@ -68,10 +71,8 @@ def calcular_digito_verificador(rut):
 def agregar_digito_verificador(rut):
     return f"{rut}-{calcular_digito_verificador(rut)}"
 
-@app.route('/captura_asistencia', methods=['GET'])
-def get_all_alumnos():
-    return render_template('captura_asistencia.html')
-
+def detectado(rut):
+    return rut in listaDeDetectados
 @app.route('/cursos', methods=['GET'])
 def get_all_cursos():
     mysql = connectToMySQL('attend_bd')
@@ -82,10 +83,10 @@ def get_all_cursos():
 @app.route('/alumnos/<int:section_id>', methods=['GET'])
 def get_alumnos_by_section_on_date(section_id):
     mysql = connectToMySQL('attend_bd')
-    # Consulta para obtener los datos de la sección y la asignatura
+    # Datos de la sección y la asignatura
     section_query = "SELECT secciones.*, asignaturas.nombre AS nombre_asignatura FROM secciones JOIN asignaturas ON asignaturas.id_asignatura = secciones.id_asignatura WHERE secciones.id_seccion = %s;"
     section_data = mysql.query_db(section_query, (section_id,))
-    # Consulta para obtener los datos de los alumnos
+    # Datos de los alumnos
     alumnos_query = "SELECT alumnos.* FROM alumnos JOIN inscritos ON inscritos.id_alumno = alumnos.id_alumno WHERE inscritos.id_seccion = %s;"
     alumnos_data = mysql.query_db(alumnos_query, (section_id,))
     aux_list = []
@@ -94,11 +95,12 @@ def get_alumnos_by_section_on_date(section_id):
     global listaDeEstudiantes
     global listaDeDetectados
     listaDeDetectados = []
-    listaDeEstudiantes = aux_list 
-    # Cerrar la conexión manualmente
+    listaDeEstudiantes = aux_list
+
     mysql.close_connection()
+
     fecha_actual = datetime.now()
-    # Define un diccionario para traducir los nombres de los meses
+    # Para traducir los meses
     meses = {
         1: 'enero',
         2: 'febrero',
@@ -113,63 +115,70 @@ def get_alumnos_by_section_on_date(section_id):
         11: 'noviembre',
         12: 'diciembre'
     }
+    
     return render_template('alumnos.html', seccion=section_data[0], alumnos=alumnos_data, fecha_actual=fecha_actual, meses=meses)
-
-@app.route('/agregar_manualmente', methods=['POST'])
-def agregar_manualmente():
-    # Obtén el valor enviado desde el cliente
-    data = request.json
-    rut = data.get('rut')
-
-    # Verifica si el RUT está inscrito
-    mysql = connectToMySQL('attend_bd')
-    inscrito_query = "SELECT * FROM alumnos WHERE rut = %s;"
-    inscrito_data = mysql.query_db(inscrito_query, (rut,))
-    mysql.close_connection()
-
-    if inscrito_data:
-        # Agrega el valor a la lista listaDeDetectados
-        listaDeDetectados.append(rut)
-        # Retorna una respuesta exitosa al cliente
-        return 'Valor agregado correctamente', 200
-    else:
-        # Retorna un mensaje de error si el RUT no está inscrito
-        return 'El RUT no se encuentra inscrito', 400
-
-@app.route('/video_feedx', methods=['GET'])
-def video_feedx():
-    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
-
-@app.route('/listado_seccion/<int:section_id>', methods=['GET'])
-def get_alumnos_by_section(section_id):
-    mysql = connectToMySQL('attend_bd')
-    # Consulta para obtener los datos de la sección y la asignatura
-    section_query = "SELECT secciones.*, asignaturas.nombre AS nombre_asignatura FROM secciones JOIN asignaturas ON asignaturas.id_asignatura = secciones.id_asignatura WHERE secciones.id_seccion = %s;"
-    section_data = mysql.query_db(section_query, (section_id,))
-    # Consulta para obtener los datos de los alumnos
-    alumnos_query = "SELECT alumnos.* FROM alumnos JOIN inscritos ON inscritos.id_alumno = alumnos.id_alumno WHERE inscritos.id_seccion = %s;"
-    alumnos_data = mysql.query_db(alumnos_query, (section_id,))
-    mysql.close_connection()
-    return render_template('listado_seccion.html', seccion=section_data[0], alumnos=alumnos_data, section_id=section_id)
 
 @app.route('/listaDetectados', methods=['GET'])
 def return_list():
     return jsonify(arreglo=listaDeDetectados)
 
+@app.route('/agregar_manualmente', methods=['POST'])
+def agregar_manualmente():
+
+    data = request.json
+    rut = data.get('rut')
+
+    mysql = connectToMySQL('attend_bd')
+    # Verifica si el RUT está inscrito
+    inscrito_query = "SELECT * FROM alumnos WHERE rut = %s;"
+    inscrito_data = mysql.query_db(inscrito_query, (rut,))
+
+    mysql.close_connection()
+
+    if inscrito_data:
+        listaDeDetectados.append(rut)
+        return 'Valor agregado correctamente', 200
+    else:
+        return 'El RUT no se encuentra inscrito', 400
+
+@app.route('/video_feed', methods=['GET'])
+def video_feed():
+    return Response(generate(), mimetype='multipart/x-mixed-replace; boundary=frame')
+
+@app.route('/listado_seccion/<int:section_id>', methods=['GET'])
+def get_alumnos_by_section(section_id):
+    mysql = connectToMySQL('attend_bd')
+    # Datos de la sección y la asignatura
+    section_query = "SELECT secciones.*, asignaturas.nombre AS nombre_asignatura FROM secciones JOIN asignaturas ON asignaturas.id_asignatura = secciones.id_asignatura WHERE secciones.id_seccion = %s;"
+    section_data = mysql.query_db(section_query, (section_id,))
+    # Datos de los alumnos
+    alumnos_query = "SELECT alumnos.* FROM alumnos JOIN inscritos ON inscritos.id_alumno = alumnos.id_alumno WHERE inscritos.id_seccion = %s;"
+    alumnos_data = mysql.query_db(alumnos_query, (section_id,))
+    mysql.close_connection()
+
+    return render_template('listado_seccion.html', seccion=section_data[0], alumnos=alumnos_data, section_id=section_id)
+
+
+
 
 @app.route('/agregar_alumno_seccion/<int:section_id>', methods=['POST'])
 def agregar_alumno_seccion(section_id):
+
     rut = request.form.get('rut_alumno')
-    # Crear una conexión a la base de datos
+
     db = connectToMySQL('attend_bd')
-    # Consulta SQL para verificar si el rut ya existe en la base de datos
+    # Verificar si el rut ya existe en la base de datos
     query = "SELECT * FROM alumnos WHERE rut = %s"
     data = (rut,)
     resultado = db.query_db(query, data)
+    print (resultado)
+
     if not resultado:
         flash('El rut proporcionado no está registrado', 'error')
         return redirect(url_for('get_alumnos_by_section', section_id=section_id))
-    # Consulta SQL para encontrar el id del alumno en la base de datos por el rut
+
+    # Obtener el id del alumno
+
     query = "SELECT id_alumno FROM alumnos WHERE rut = %s"
     data = (rut,)
     resultado = db.query_db(query, data)
@@ -246,7 +255,7 @@ def generar_documento_excel():
     
     # Agregar la fecha actual como un título en el archivo Excel
     fecha_actual = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
-    titulo_fecha = f'Fecha de generación del documento: {fecha_actual}'
+    titulo_fecha = f'Fecha: {fecha_actual}'
     
     # Nombre del archivo Excel a generar
     excel_filename = 'alumnos_detectados.xlsx'
@@ -269,6 +278,43 @@ def generar_documento_excel():
     
     # Cerrar el escritor
     writer.close()
-    
+    mysql.close_connection()
     # Devolver el archivo Excel como respuesta
     return send_file(excel_filepath, as_attachment=True)
+
+@app.route('/quitar_alumno_seccion', methods=['POST'])
+def quitar_alumno_seccion():
+    # Obtener el id de la sección y el id del alumno del formulario
+    section_id = request.form.get('section_id')
+    print ("SECTION ID: ",request.form.get('section_id'))
+    alumno_id = request.form.get('alumno_id')
+    print ("ALUMNO_ID: ",request.form.get('alumno_id'))
+    # Crear una conexión a la base de datos
+    db = connectToMySQL('attend_bd')
+
+    try:
+        # Eliminar al alumno de la sección en la tabla 'inscritos'
+        query = "DELETE FROM inscritos WHERE id_seccion = %s AND id_alumno = %s"
+        data = (section_id, alumno_id)
+        db.query_db(query, data)
+        flash('Alumno quitado de la sección exitosamente', 'success')
+    except Exception as e:
+        # Manejar cualquier error que ocurra durante la eliminación
+        flash('Error al quitar alumno de la sección', 'error')
+        print(e)
+
+    return redirect(url_for('get_alumnos_by_section', section_id=section_id))
+
+@app.route('/quitar_asistencia', methods=['POST'])
+def quitar_asistencia():
+    data = request.json
+    rut_estudiante = data.get('rut_estudiante')
+    global listaDeDetectados
+    for estudiante in listaDeDetectados:
+        print("ESTUDIANTE: ", estudiante, "RUT_ESTUDIANTE: ", rut_estudiante)
+        print(type(estudiante), type(rut_estudiante))
+        if estudiante == rut_estudiante:
+            listaDeDetectados.remove(rut_estudiante)
+            print("Estudiante quitado de la lista de detectados")
+            return 'Asistencia removida', 200
+    return 'No se removio asistencia', 400

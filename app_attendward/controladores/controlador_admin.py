@@ -8,6 +8,10 @@ import imutils
 from time import time
 from shutil import rmtree
 
+data_ruta='app_attendward/rfacial/DATA'
+if not os.path.exists(data_ruta):
+    os.makedirs(data_ruta)
+
 @app.route('/admin', methods=['GET'])
 def admin_page():
     resultados = None
@@ -71,8 +75,7 @@ def entrenar_modelo_alumno():
     # Configuración para el entrenamiento
     rut = request.form.get('rut')
     modelo = rut
-    ruta1 = 'app_attendward/rfacial/DATA'
-    ruta_completa = os.path.join(ruta1, modelo)
+    ruta_completa = os.path.join(data_ruta, modelo)
 
     if not os.path.exists(ruta_completa):
         os.makedirs(ruta_completa)
@@ -111,8 +114,6 @@ def entrenar_modelo_alumno():
     camara.release()
     cv.destroyAllWindows()
 
-    # Entrenamiento del modelo
-    data_ruta = 'app_attendward/rfacial/DATA'
     lista_data = os.listdir(data_ruta)
     modelos_entrenados = []
 
@@ -143,5 +144,6 @@ def entrenar_modelo_alumno():
         if os.path.exists(ruta_completa):
             rmtree(ruta_completa)
 
-    flash('Entrenamiento completado exitosamente', 'success')  # Mensaje de éxito
+    flash('Entrenamiento completado exitosamente', 'success')
     return redirect(url_for('admin_page'))
+

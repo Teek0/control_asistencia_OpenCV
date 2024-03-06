@@ -62,7 +62,7 @@
                 </div>
             </div>
             <div class="video-container">
-                <img id="video" class="img-fluid" src="{{ url_for('video_feedx') }}" alt="Video en directo">
+                <img id="video" class="img-fluid" src="{{ url_for('video_feed') }}" alt="Video en directo">
             </div>
 
 
@@ -71,8 +71,8 @@
                 <p>Para agregar a un alumno no registrado en la lista, por favor contacte a un administrador.</p>
             </div>
         </div>
-        <div class="col-sm div-listado">
-            <table id="tabla-alumnos">
+        <div class="col-sm div-listado" style="overflow-y: auto; height:500px">
+            <table id="tabla-alumnos" >
                 <caption></caption>
                 <thead>
                     <tr>
@@ -83,10 +83,13 @@
                 </thead>
                 <tbody>
                     {% for alumno in alumnos %}
-                    <tr>
+                    <tr style="background-color: white;">
                         <td>{{ alumno.nombre }}</td>
                         <td>{{ alumno.apellido }}</td>
                         <td class="rut-cell">{{ alumno.rut }}</td>
+                        <td>
+                            <button id="quitarAsistenciaBtn{{ loop.index }}" type="button" class="btn btn-sm quitar-asistencia-btn">🗑️</button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -134,6 +137,32 @@
         });
     });
 
+    const quitarAsistenciaBtns = document.querySelectorAll('.quitar-asistencia-btn');
+    quitarAsistenciaBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            // Obtener el rut del alumno correspondiente
+            const rutAlumno = btn.parentNode.parentNode.querySelector('.rut-cell').textContent.trim();
+            console.log(rutAlumno);
+            // Realizar la solicitud AJAX al servidor Flask
+            fetch('/quitar_asistencia', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ rut_estudiante: rutAlumno })
+            })
+            .then(response => {
+                if (response.ok) {
+                    // La operación se realizó correctamente, actualiza la tabla si es necesario
+                    updateTable();
+                } else {
+                    console.error('Error al quitar la asistencia.');
+                }
+            })
+            .catch(error => console.error('Error al enviar la solicitud:', error));
+        });
+    });
+
     // Función para actualizar la tabla con los ruts recibidos del backend
     function updateTable() {
         // Realiza una solicitud al endpoint /listaDetectados
@@ -151,13 +180,19 @@
                         const rutCell = row.querySelector('.rut-cell');
                         if (rutCell && ruts.includes(rutCell.textContent)) {
                             row.style.backgroundColor = 'yellow';
+                        }else{
+                            row.style.backgroundColor = 'white';
                         }
+                    });
+                }else{
+                    const tableRows = document.querySelectorAll('#tabla-alumnos tr');
+                    tableRows.forEach(row => {
+                            row.style.backgroundColor = 'white';
                     });
                 }
             })
             .catch(error => console.error('Error al actualizar la tabla:', error));
     }
-
     // Llama a la función updateTable() cada segundo
     setInterval(updateTable, 1000);
 
