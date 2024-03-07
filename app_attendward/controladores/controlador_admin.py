@@ -147,3 +147,23 @@ def entrenar_modelo_alumno():
     flash('Entrenamiento completado exitosamente', 'success')
     return redirect(url_for('admin_page'))
 
+@app.route('/eliminar_entrenamiento', methods=['POST'])
+def eliminar_entrenamiento():
+    # Obtener el rut del formulario
+    rut = request.form.get('rut')
+
+    # Llamar a la función para eliminar el entrenamiento
+    eliminar_entrenamiento_rut(rut)
+
+    # Mostrar un mensaje de éxito y redirigir a la página admin
+    flash('Entrenamiento eliminado exitosamente', 'success')
+    return redirect(url_for('admin_page'))
+
+def eliminar_entrenamiento_rut(rut):
+    # Ruta completa del directorio de entrenamiento del alumno
+    ruta_completa = os.path.join('app_attendward/rfacial/entrenamientos', f'{rut}.xml')
+
+    # Verificar si el archivo de entrenamiento existe
+    if os.path.exists(ruta_completa):
+        # Eliminar el archivo de entrenamiento
+        os.remove(ruta_completa)

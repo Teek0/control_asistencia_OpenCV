@@ -178,7 +178,6 @@ def agregar_alumno_seccion(section_id):
         return redirect(url_for('get_alumnos_by_section', section_id=section_id))
 
     # Obtener el id del alumno
-
     query = "SELECT id_alumno FROM alumnos WHERE rut = %s"
     data = (rut,)
     resultado = db.query_db(query, data)

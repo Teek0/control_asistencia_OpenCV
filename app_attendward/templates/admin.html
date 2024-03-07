@@ -88,6 +88,10 @@
                             {% endfor %}
                             {% if resultados.train_found %}
                             - Entrenamiento encontrado.
+                            <form action="/eliminar_entrenamiento" method="post">
+                                <input type="hidden" name="rut" value="{{ resultados.resultados[0].rut }}">
+                                <button type="submit" class="btn btn-danger btn-sm">Eliminar</button>
+                            </form>
                             {% else %}
                             - No se encuentra entrenamiento.
                             <form action="/entrenar" method="post">
