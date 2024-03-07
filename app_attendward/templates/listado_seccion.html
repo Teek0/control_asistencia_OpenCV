@@ -63,6 +63,7 @@
                     <th>Nombre</th>
                     <th>Apellido</th>
                     <th>RUT</th>
+                    <th></th>
                 </tr>
             </thead>
             <tbody>
@@ -75,7 +76,7 @@
                         <form action="/quitar_alumno_seccion" method="post">
                             <input type="hidden" name="alumno_id" value="{{ alumno.id_alumno }}">
                             <input type="hidden" name="section_id" value="{{ seccion.id_seccion }}">
-                            <button type="submit" class="btn btn-danger">Quitar de la sección</button>
+                            <button type="submit" class="btn btn-sm">🗑️</button>
                         </form>
                     </td>
                 </tr>

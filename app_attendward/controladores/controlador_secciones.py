@@ -210,16 +210,6 @@ def agregar_asistencia_manual(section_id):
     if not alumno_resultado:
         flash('El Rut proporcionado no está registrado', 'error')
         return redirect(url_for('get_alumnos_by_section_on_date', section_id=section_id))
-    
-    id_alumno = alumno_resultado[0]['id_alumno']
-
-    # Consulta SQL para insertar la asistencia manualmente
-    query_insert_asistencia = "INSERT INTO asistencias (id_seccion, id_alumno) VALUES (%s, %s)"
-    data_insert_asistencia = (section_id, id_alumno)
-    db.query_db(query_insert_asistencia, data_insert_asistencia)
-    
-    # Cerrar la conexión manualmente
-    db.close_connection()
 
     flash('Asistencia agregada exitosamente', 'success')
     
