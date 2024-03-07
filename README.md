@@ -1,15 +1,7 @@
 El software toma el nombre de attendward para el desarrollo, este no pretende ser el nombre final.
 
-#pasos realizados:
+pip install flask pymysql flask-bcrypt opencv-contrib-python imutils xlsxwriter openpyxl pandas
 
 
-pip install pipenv
 
 
-pipenv install flask pymysql flask-bcrypt opencv-contrib-python imutils
-pip install pandas
-pip install openpyxl
-pip install xlsxwriter
-
-
-#pipenv shell
