@@ -1,3 +1,4 @@
+# Importar las librerías necesarias
 from flask import render_template, request, redirect, url_for, flash
 from app_attendward import app
 from app_attendward.config.mysqlconnection import connectToMySQL
@@ -8,27 +9,28 @@ import imutils
 from time import time
 from shutil import rmtree
 
-data_ruta='app_attendward/rfacial/DATA'
-if not os.path.exists(data_ruta):
-    os.makedirs(data_ruta)
-
+# Rutas a utilizar
+data_ruta = 'app_attendward/rfacial/DATA'
 ruta_entrenamientos = 'app_attendward/rfacial/entrenamientos'
 
+# Función para verificar si existe la ruta y crearla si no existe
+def verificar_ruta(ruta):
+    if not os.path.exists(ruta):
+        os.makedirs(ruta)
+
+# Función para procesar la página de administración
 @app.route('/admin', methods=['GET'])
 def admin_page():
     resultados = None
-    return render_template('admin.html', resultados=resultados)
+    return render_template('administrar.html', resultados=resultados)
 
+# Función para buscar un alumno
 @app.route('/buscar_alumno', methods=['POST'])
 def buscar_alumno():
-    # Obtener el rut ingresado por el usuario desde el formulario
     rut = request.form.get('rut')
-
-    # Manejar el caso en el que el campo de rut esté vacío
     if not rut:
         flash('Debes ingresar un rut', 'error')
         return redirect(url_for('admin_page'))
-
     try:
         rut = int(rut)
     except ValueError:
@@ -37,86 +39,68 @@ def buscar_alumno():
 
     db = connectToMySQL('attend_bd')
     query = "SELECT * FROM alumnos WHERE rut = %s"
-
     data = (rut,)
     resultados = db.query_db(query, data)
 
-    train_found = False
-    for modelo_file in os.listdir(ruta_entrenamientos):
-        if rut == int(os.path.splitext(os.path.basename(modelo_file))[0]):
-            train_found = True
+    train_found = any(rut == int(os.path.splitext(os.path.basename(modelo_file))[0]) for modelo_file in os.listdir(ruta_entrenamientos))
+    resultados = {"train_found": train_found, "resultados": resultados}
+    return render_template('administrar.html', resultados=resultados)
 
-    resultados = {"train_found":train_found,"resultados":resultados}
-    # Renderizar la misma página admin.html con los resultados de la búsqueda
-    return render_template('admin.html', resultados=resultados)
-
-
-
+# Función para crear un alumno
 @app.route('/crear_alumno', methods=['POST'])
 def crear_alumno():
-    # Obtener los datos del formulario
     nombre = request.form.get('nombre')
     apellido = request.form.get('apellido')
     rut = request.form.get('rut_nuevo')
-    # Validar que todos los campos estén llenos
     if not nombre or not apellido or not rut:
-        # Si algún campo está vacío, enviar un mensaje de error y redireccionar a la página admin
         flash('Todos los campos son obligatorios', 'error')
         return redirect(url_for('admin_page'))
-    # Crear una conexión a la base de datos
+
     db = connectToMySQL('attend_bd')
-    # Consulta SQL para verificar si el rut ya existe en la base de datos
     query = "SELECT * FROM alumnos WHERE rut = %s"
     data = (rut,)
     resultado = db.query_db(query, data)
-    # Si el rut ya existe en la base de datos, mostrar un mensaje de error y redireccionar
     if resultado:
         flash('El rut proporcionado ya está registrado', 'error')
         return redirect(url_for('admin_page'))
-    # Consulta SQL para insertar un nuevo alumno en la base de datos
+
     query = "INSERT INTO alumnos (nombre, apellido, rut) VALUES (%s, %s, %s)"
     data = (nombre, apellido, rut)
-    # Ejecutar la consulta
     db.query_db(query, data)
-    # Mostrar un mensaje de éxito y redireccionar a la página admin
+
     flash('Alumno creado exitosamente', 'success')
     return redirect(url_for('admin_page'))
 
-
+# Función para entrenar el modelo del alumno
 @app.route('/entrenar', methods=['POST'])
 def entrenar_modelo_alumno():
-    # Configuración para el entrenamiento
     rut = request.form.get('rut')
     modelo = rut
     ruta_completa = os.path.join(data_ruta, modelo)
-
-    if not os.path.exists(ruta_completa):
-        os.makedirs(ruta_completa)
+    verificar_ruta(ruta_completa)
 
     camara = cv.VideoCapture(0)
     print("Cámara lista")
-    ruidos = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')    # detector de rostros
+    ruidos = cv.CascadeClassifier(cv.data.haarcascades + 'haarcascade_frontalface_default.xml')
     tiempo_inicial = time()
 
     id = 1
     while True:
         respuesta, captura = camara.read()
-        if respuesta == False:
+        if not respuesta:
             break
         captura = imutils.resize(captura, width=640)
 
-        gris = cv.cvtColor(captura, cv.COLOR_BGR2GRAY)  # escala de grises
+        gris = cv.cvtColor(captura, cv.COLOR_BGR2GRAY)
         idcaptura = captura.copy()
 
-        cara = ruidos.detectMultiScale(gris, 1.3, 5)   # detecta rostros
+        cara = ruidos.detectMultiScale(gris, 1.3, 5)
 
         for (x, y, e1, e2) in cara:
-            cv.rectangle(captura, (x, y), (x+e1, y+e2),
-                        (0, 255, 0), 2)  # dibuja rectangulo
-            rostrocapturado = idcaptura[y:y+e2, x:x+e1]   # rostro capturado
-            rostrocapturado = cv.resize(
-                rostrocapturado, (160, 160), interpolation=cv.INTER_CUBIC)  # redimensiona
-            cv.imwrite(os.path.join(ruta_completa, f'imagen_{id}.jpg'), rostrocapturado)  # guarda imagen
+            cv.rectangle(captura, (x, y), (x+e1, y+e2), (0, 255, 0), 2)
+            rostrocapturado = idcaptura[y:y+e2, x:x+e1]
+            rostrocapturado = cv.resize(rostrocapturado, (160, 160), interpolation=cv.INTER_CUBIC)
+            cv.imwrite(os.path.join(ruta_completa, f'imagen_{id}.jpg'), rostrocapturado)
             id += 1
 
         cv.imshow("Resultado", captura)
@@ -160,23 +144,16 @@ def entrenar_modelo_alumno():
     flash('Entrenamiento completado exitosamente', 'success')
     return redirect(url_for('admin_page'))
 
+# Función para eliminar el entrenamiento de un alumno
 @app.route('/eliminar_entrenamiento', methods=['POST'])
 def eliminar_entrenamiento():
-    # Obtener el rut del formulario
     rut = request.form.get('rut')
-
-    # Llamar a la función para eliminar el entrenamiento
     eliminar_entrenamiento_rut(rut)
-
-    # Mostrar un mensaje de éxito y redirigir a la página admin
     flash('Entrenamiento eliminado exitosamente', 'success')
     return redirect(url_for('admin_page'))
 
+# Función para eliminar el entrenamiento basado en el rut
 def eliminar_entrenamiento_rut(rut):
-    # Ruta completa del directorio de entrenamiento del alumno
     ruta_completa = os.path.join(ruta_entrenamientos, f'{rut}.xml')
-
-    # Verificar si el archivo de entrenamiento existe
     if os.path.exists(ruta_completa):
-        # Eliminar el archivo de entrenamiento
         os.remove(ruta_completa)
