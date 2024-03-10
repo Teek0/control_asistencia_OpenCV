@@ -12,6 +12,8 @@ data_ruta='app_attendward/rfacial/DATA'
 if not os.path.exists(data_ruta):
     os.makedirs(data_ruta)
 
+ruta_entrenamientos = 'app_attendward/rfacial/entrenamientos'
+
 @app.route('/admin', methods=['GET'])
 def admin_page():
     resultados = None
@@ -19,9 +21,19 @@ def admin_page():
 
 @app.route('/buscar_alumno', methods=['POST'])
 def buscar_alumno():
-    entrenamientos_ruta = 'app_attendward/rfacial/entrenamientos'
     # Obtener el rut ingresado por el usuario desde el formulario
     rut = request.form.get('rut')
+
+    # Manejar el caso en el que el campo de rut esté vacío
+    if not rut:
+        flash('Debes ingresar un rut', 'error')
+        return redirect(url_for('admin_page'))
+
+    try:
+        rut = int(rut)
+    except ValueError:
+        flash('El rut ingresado no es válido', 'error')
+        return redirect(url_for('admin_page'))
 
     db = connectToMySQL('attend_bd')
     query = "SELECT * FROM alumnos WHERE rut = %s"
@@ -30,13 +42,14 @@ def buscar_alumno():
     resultados = db.query_db(query, data)
 
     train_found = False
-    for modelo_file in os.listdir(entrenamientos_ruta):
-        if int(rut) == int(os.path.splitext(os.path.basename(modelo_file))[0]):
+    for modelo_file in os.listdir(ruta_entrenamientos):
+        if rut == int(os.path.splitext(os.path.basename(modelo_file))[0]):
             train_found = True
 
     resultados = {"train_found":train_found,"resultados":resultados}
     # Renderizar la misma página admin.html con los resultados de la búsqueda
     return render_template('admin.html', resultados=resultados)
+
 
 
 @app.route('/crear_alumno', methods=['POST'])
@@ -137,7 +150,7 @@ def entrenar_modelo_alumno():
         entrenamiento_eigen_face_recognizer.train(rostros_data, np.array(ids))
         
         modelo_file = f"{persona}.xml"
-        entrenamiento_eigen_face_recognizer.save(os.path.join('app_attendward/rfacial/entrenamientos', modelo_file))
+        entrenamiento_eigen_face_recognizer.save(os.path.join(ruta_entrenamientos, modelo_file))
         
         modelos_entrenados.append(entrenamiento_eigen_face_recognizer)
 
@@ -161,7 +174,7 @@ def eliminar_entrenamiento():
 
 def eliminar_entrenamiento_rut(rut):
     # Ruta completa del directorio de entrenamiento del alumno
-    ruta_completa = os.path.join('app_attendward/rfacial/entrenamientos', f'{rut}.xml')
+    ruta_completa = os.path.join(ruta_entrenamientos, f'{rut}.xml')
 
     # Verificar si el archivo de entrenamiento existe
     if os.path.exists(ruta_completa):

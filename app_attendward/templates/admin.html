@@ -9,6 +9,7 @@
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="{{url_for('static',filename='/css/styles.css')}}">
     <link rel="stylesheet" href="{{url_for('static',filename='/css/admin.css')}}">
+    <link rel="stylesheet" href="{{url_for('static',filename='/css/loader.css')}}">
 </head>
 
 <body class="body">
@@ -127,6 +128,13 @@
                             <button type="submit" class="btn btn-primary">Agregar Alumno</button>
                         </form>
                     </div>
+                    <div id="contenedor" class="invisible">
+                        <div class="contenedor-loader">
+                            <div class="rueda"></div>
+                            <div class="texto-cargando">Entrenando...</div>
+                            
+                        </div>
+                    </div>
 
                 </div>
 
@@ -153,6 +161,19 @@
             });
         </script>
 
+        <script>
+            // Script para cambiar el texto y el estilo del botón cuando se hace clic en él
+            document.getElementById('entrenar_form').addEventListener('submit', function () {
+                var entrenarButton = document.getElementById('entrenar_button');
+                entrenarButton.innerText = 'Entrenando...';
+                entrenarButton.disabled = true;
+                entrenarButton.classList.add('btn-secondary');
+                entrenarButton.classList.remove('btn-primary');
+
+                // Mostrar el contenedor de carga
+                document.getElementById('contenedor').classList.remove('invisible');
+            });
+        </script>
     </main>
 </body>
 

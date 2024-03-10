@@ -207,8 +207,8 @@ def agregar_asistencia_manual(section_id):
     alumno_resultado = db.query_db(query_alumno_id, data)
 
     if not alumno_resultado:
-        flash('El Rut proporcionado no está registrado', 'error')
-        return redirect(url_for('get_alumnos_by_section_on_date', section_id=section_id))
+        # Si el alumno no está registrado, envía una respuesta JSON con un mensaje de error
+        return jsonify({'message': 'El Rut proporcionado no está registrado'}), 400
 
     flash('Asistencia agregada exitosamente', 'success')
     

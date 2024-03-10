@@ -8,7 +8,6 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-9ndCyUaIbzAi2FUVXJi0CjmCapSmO7SnpJef0486qhLnuZ2cdeRhO02iuK6FUUVM" crossorigin="anonymous">
     <link rel="stylesheet" href="{{url_for('static',filename='/css/styles.css')}}">
-    <link rel="stylesheet" href="{{url_for('static',filename='/css/lista_alumnos.css')}}">
 </head>
 
 <body class="body">
@@ -53,8 +52,7 @@
             <div class="info">
                 <div class="row">
                     <div class="col-md-9">
-                        <input type="text" class="form-control" id="rutInput" placeholder="Rut: 12345678"
-                            maxlength="8">
+                        <input type="text" class="form-control" id="rutInput" placeholder="Rut: 12345678" maxlength="8">
                     </div>
                     <div class="col-md-3">
                         <button id="agregarAsistenciaBtn" class="btn btn-success btn-block">Agregar</button>
@@ -72,7 +70,7 @@
             </div>
         </div>
         <div class="col-sm div-listado" style="overflow-y: auto; height:500px">
-            <table id="tabla-alumnos" >
+            <table id="tabla-alumnos">
                 <caption></caption>
                 <thead>
                     <tr>
@@ -89,7 +87,8 @@
                         <td>{{ alumno.apellido }}</td>
                         <td class="rut-cell">{{ alumno.rut }}</td>
                         <td>
-                            <button id="quitarAsistenciaBtn{{ loop.index }}" type="button" class="btn btn-sm quitar-asistencia-btn">🗑️</button>
+                            <button id="quitarAsistenciaBtn{{ loop.index }}" type="button"
+                                class="btn btn-sm quitar-asistencia-btn">🗑️</button>
                         </td>
                     </tr>
                     {% endfor %}
@@ -102,45 +101,52 @@
 </body>
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Agrega un escuchador de eventos para el clic del botón "Agregar"
-        document.getElementById("agregarAsistenciaBtn").addEventListener("click", function (event) {
-            // Evita que el formulario se envíe normalmente
-            event.preventDefault();
+    // Agrega un escuchador de eventos para el clic del botón "Agregar"
+    document.getElementById("agregarAsistenciaBtn").addEventListener("click", function (event) {
+        // Evita que el formulario se envíe normalmente
+        event.preventDefault();
 
-            // Obtiene el valor ingresado en el campo de entrada
-            const rutInput = document.getElementById("rutInput").value.trim();
+        // Obtiene el valor ingresado en el campo de entrada
+        const rutInput = document.getElementById("rutInput").value.trim();
 
-            // Verifica si el valor no está vacío
-            if (rutInput !== "") {
-                // Envía el valor al servidor a través de una solicitud AJAX
-                fetch('/agregar_manualmente', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ rut: rutInput })
+        // Verifica si el valor no está vacío
+        if (rutInput !== "") {
+            // Envía el valor al servidor a través de una solicitud AJAX
+            fetch('/agregar_manualmente', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ rut: rutInput })
+            })
+                .then(response => {
+                    if (response.ok) {
+                        // La operación se realizó correctamente, actualiza la tabla si es necesario
+                        updateTable();
+                    } else {
+                        // Si hay un error en la respuesta, muestra un mensaje de alerta
+                        alert("Error: El Rut proporcionado no está registrado");
+                        console.error('Error al agregar manualmente el valor.');
+                    }
                 })
-                    .then(response => {
-                        if (response.ok) {
-                            // La operación se realizó correctamente, actualiza la tabla si es necesario
-                            updateTable();
-                        } else {
-                            console.error('Error al agregar manualmente el valor.');
-                        }
-                    })
-                    .catch(error => console.error('Error al enviar la solicitud:', error));
+                .catch(error => {
+                    // Si hay un error en la solicitud, muestra un mensaje de alerta
+                    alert("Error: No se pudo enviar la solicitud al servidor");
+                    console.error('Error al enviar la solicitud:', error);
+                });
 
-                // Borra el campo de entrada después de agregar el valor
-                document.getElementById("rutInput").value = "";
-            } else {
-                alert("Por favor ingresa un valor válido antes de agregarlo.");
-            }
-        });
+            // Borra el campo de entrada después de agregar el valor
+            document.getElementById("rutInput").value = "";
+        } else {
+            // Si el campo está vacío, muestra un mensaje de alerta
+            alert("Por favor ingresa un valor válido antes de agregarlo.");
+        }
     });
+});
 
     const quitarAsistenciaBtns = document.querySelectorAll('.quitar-asistencia-btn');
     quitarAsistenciaBtns.forEach(btn => {
-        btn.addEventListener('click', function() {
+        btn.addEventListener('click', function () {
             // Obtener el rut del alumno correspondiente
             const rutAlumno = btn.parentNode.parentNode.querySelector('.rut-cell').textContent.trim();
             console.log(rutAlumno);
@@ -152,15 +158,15 @@
                 },
                 body: JSON.stringify({ rut_estudiante: rutAlumno })
             })
-            .then(response => {
-                if (response.ok) {
-                    // La operación se realizó correctamente, actualiza la tabla si es necesario
-                    updateTable();
-                } else {
-                    console.error('Error al quitar la asistencia.');
-                }
-            })
-            .catch(error => console.error('Error al enviar la solicitud:', error));
+                .then(response => {
+                    if (response.ok) {
+                        // La operación se realizó correctamente, actualiza la tabla si es necesario
+                        updateTable();
+                    } else {
+                        console.error('Error al quitar la asistencia.');
+                    }
+                })
+                .catch(error => console.error('Error al enviar la solicitud:', error));
         });
     });
 
@@ -181,14 +187,14 @@
                         const rutCell = row.querySelector('.rut-cell');
                         if (rutCell && ruts.includes(rutCell.textContent)) {
                             row.style.backgroundColor = 'yellow';
-                        }else{
+                        } else {
                             row.style.backgroundColor = 'white';
                         }
                     });
-                }else{
+                } else {
                     const tableRows = document.querySelectorAll('#tabla-alumnos tr');
                     tableRows.forEach(row => {
-                            row.style.backgroundColor = 'white';
+                        row.style.backgroundColor = 'white';
                     });
                 }
             })
@@ -209,27 +215,28 @@
             fetch('/generar_documento_excel', {
                 method: 'POST'
             })
-            .then(response => {
-                if (response.ok) {
-                    // Descarga el archivo Excel generado
-                    return response.blob();
-                } else {
-                    console.error('Error al generar el documento Excel.');
-                }
-            })
-            .then(blob => {
-                // Crea un enlace temporal para descargar el archivo
-                const url = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.style.display = 'none';
-                a.href = url;
-                a.download = 'alumnos_detectados.xlsx';
-                document.body.appendChild(a);
-                a.click();
-                window.URL.revokeObjectURL(url);
-            })
-            .catch(error => console.error('Error al generar el documento Excel:', error));
+                .then(response => {
+                    if (response.ok) {
+                        // Descarga el archivo Excel generado
+                        return response.blob();
+                    } else {
+                        console.error('Error al generar el documento Excel.');
+                    }
+                })
+                .then(blob => {
+                    // Crea un enlace temporal para descargar el archivo
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.style.display = 'none';
+                    a.href = url;
+                    a.download = 'alumnos_detectados.xlsx';
+                    document.body.appendChild(a);
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                })
+                .catch(error => console.error('Error al generar el documento Excel:', error));
         });
     });
 </script>
+
 </html>
